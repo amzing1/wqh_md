@@ -1,4 +1,4 @@
-function hasFindAll(map: Map<string, number>) {
+export function hasFindAll(map: Map<string, number>) {
   let res = true;
   console.log(map);
   map.forEach((value) => {
