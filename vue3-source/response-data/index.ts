@@ -1,4 +1,6 @@
+import { computed } from "./response/computed";
 import { effect, toResponseData } from "./response/effect";
+import { addJob, flushJob } from "./response/flushJob";
 import { DataObj } from "./typings/testData";
 
 // const data: DataObj = {
@@ -57,3 +59,51 @@ import { DataObj } from "./typings/testData";
 // setInterval(() => {
 //   responseData.count += 2;
 // }, 1000);
+
+// const data: DataObj = {
+//   text: "hello world",
+// };
+// const obj = toResponseData(data);
+// effect(
+//   () => {
+//     console.log(obj.text);
+//   },
+//   {
+//     scheduler(fn) {
+//       addJob(fn);
+//       flushJob();
+//     },
+//   }
+// );
+
+// obj.text += "!!!";
+// obj.text += "!!!";
+
+// console.log("已经结束咧");
+
+// const data: DataObj = {
+//   text: "hello world",
+//   foo: "foo",
+//   bar: "bar",
+// };
+
+// const obj = toResponseData(data);
+// const comp = computed(() => obj.foo + obj.bar);
+// data.foo = "foo2";
+// data.bar = "bar2";
+// console.log(comp);
+
+const data: DataObj = {
+  text: "hello world",
+  foo: "foo",
+  bar: "bar",
+};
+
+const obj = toResponseData(data);
+
+const sumRes = computed(() => obj.foo + obj.bar);
+effect(() => {
+  console.log(sumRes.value);
+});
+
+obj.foo += "foo";

@@ -4,6 +4,12 @@ export interface DataObj {
   [propName: string]: any;
 }
 
+interface Options {
+  scheduler?: Function;
+  lazy?: boolean;
+}
+
 export interface EffectFn extends Function {
   deps?: Set<Function>[];
+  options?: Options;
 }

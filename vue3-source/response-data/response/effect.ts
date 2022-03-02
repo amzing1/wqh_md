@@ -13,20 +13,25 @@ function cleanup(fn: EffectFn) {
   fn.deps.length = 0;
 }
 
-export function effect(fn: EffectFn) {
+export function effect(fn: EffectFn, options = {}) {
   const effectFn: EffectFn = () => {
     cleanup(effectFn);
     activeEffect = effectFn;
     effectStack.push(effectFn);
-    fn();
+    const res = fn();
     effectStack.pop();
     activeEffect = effectStack[effectStack.length - 1];
+    return res;
   };
   effectFn.deps = [];
-  effectFn();
+  effectFn.options = options;
+  if (!effectFn.options.lazy) {
+    effectFn();
+  }
+  return effectFn;
 }
 
-function track(target: DataObj, key: string) {
+export function track(target: DataObj, key: string) {
   if (!activeEffect) {
     return;
   }
@@ -42,21 +47,27 @@ function track(target: DataObj, key: string) {
   activeEffect.deps.push(deps);
 }
 
-function trigger(target: DataObj, key: string, newVal) {
+export function trigger(target: DataObj, key: string, newVal) {
   target[key] = newVal;
   const depsMap = bucket.get(target);
   if (!depsMap) {
     return;
   }
   const effects = depsMap.get(key);
-  const effectsToRun = new Set<Function>();
+  const effectsToRun = new Set<EffectFn>();
   effects &&
     effects.forEach((fn) => {
       if (fn !== activeEffect) {
         effectsToRun.add(fn);
       }
     });
-  effectsToRun.forEach((fn) => fn());
+  effectsToRun.forEach((fn) => {
+    if (fn.options.scheduler) {
+      fn.options.scheduler(fn);
+    } else {
+      fn();
+    }
+  });
 }
 
 export function toResponseData(data: DataObj) {
