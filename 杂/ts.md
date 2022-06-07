@@ -224,6 +224,44 @@ function createArray<T = string>(lenth: number, value: T): Array<T> {
 
 如果定义了两个相同名字的函数，接口或类，那么它们会合并成一个类型。
 
+### 索引类型
+
+* keyof：该操作符可以用于获取某种类型的所有键，其返回类型是联合类型
+* T[k]：表示接口T的属性K所代表的类型
+* extends：泛型约束
+
+```js
+function getValues<T, K extends keyof T>(userInfo: T, keys: k[]): T[K][] {
+    return keys.map(key => userInfo[key]);
+}
+```
+
+### 映射类型
+
+* in：用来对联合类型实现遍历
+* Partial：Partial<T>将T的所有属性映射为可选的
+* Readonly: Readonly<T>将所有属性映射为只读的
+* Pick：用于抽取子集，挑选一组属性并组成一个新的类型
+* Record：会创建新属性的非同态类型
+
+### 条件类型
+
+* T extends U ? X : Y
+* Exclude
+* Extract：Extract<T, U>提取交集
+
+### 工具类型
+
+* Omit：Omit<T, U>从类型T中剔除U中的所有属性
+
+* NonNullable：过滤类型中的null和undefined
+
+* Parameters：获取函数的参数类型，将每个参数类型放在一个元组中
+
+* RetrunType：函数返回值类型
+
+  
+
 ### 在Ts中使用ESLint
 
 ~~~ts

@@ -1,8 +1,11 @@
-import { INERATE_KEY, TriggerType } from "./constance";
+import { arrayInstrumentation, mutableInstrumentation, shouldTrack } from "./instrumentation";
+import { INERATE_KEY, MAP_KEY_ITERATE_KEY, TriggerType } from "./constance";
 
 const bucket = new WeakMap();
 let activeEffect = null;
 const effectStack = [];
+
+const reactiveMap = new Map();
 
 function cleanup(effectFn) {
     for (let i = 0; i < effectFn.deps.length; i++) {
@@ -30,7 +33,7 @@ export function effect(fn, options = {}) {
 }
 
 export function track(target, key) {
-    if (!activeEffect) {
+    if (!activeEffect || !shouldTrack) {
         return;
     }
     let effectMap = bucket.get(target);
@@ -58,15 +61,27 @@ export function trigger(target, key, type, newVal) {
     });
     
     if (type === TriggerType.ADD || type === TriggerType.DELETE) {
-        const interateEffects = effectMap.get(INERATE_KEY);
-        interateEffects && interateEffects.forEach(fn => {
-            effectToRun.add(fn);
-        })
+        if (Array.isArray(target)) {
+            const lengthEffects = effectMap.get('length');
+            lengthEffects && lengthEffects.forEach(fn => {
+                effectToRun.add(fn);
+            })
+        } else if (Object.prototype.toString.call(target) === '[object map]') {
+            const interateEffects = effectMap.get(MAP_KEY_ITERATE_KEY);
+            interateEffects && interateEffects.forEach(fn => {
+                effectToRun.add(fn);
+            })
+        } else {
+            const interateEffects = effectMap.get(INERATE_KEY);
+            interateEffects && interateEffects.forEach(fn => {
+                effectToRun.add(fn);
+            })
+        }
     }
 
-    if (type === TriggerType.ADD && Array.isArray(target)) {
-        const lengthEffects = effectMap.get('length');
-        lengthEffects && lengthEffects.forEach(fn => {
+    if (type === TriggerType.SET && target instanceof Map) {
+        const interateEffects = effectMap.get(INERATE_KEY);
+        interateEffects && interateEffects.forEach(fn => {
             effectToRun.add(fn);
         })
     }
@@ -93,12 +108,27 @@ export function trigger(target, key, type, newVal) {
 }
 
 export function createReactive(data, options = {}) {
-    const obj = new Proxy(data, {
+    const existionProxy = reactiveMap.get(data);
+    if (existionProxy) {
+        return existionProxy;
+    }
+    const proxy = new Proxy(data, {
         get(target, key, receiver) {
             if (key === 'raw') {
                 return target;
             }
-            if (!options.isReadOnly) {
+            if (target instanceof Set || target instanceof Map) {
+                if (key === 'size') {
+                    track(target, INERATE_KEY);
+                    return Reflect.get(target, key, target);
+                } else {
+                    return Reflect.get(mutableInstrumentation, key, receiver);
+                }
+            }
+            if (Array.isArray(target) && Object.prototype.hasOwnProperty.call(arrayInstrumentation, key)) {
+                return Reflect.get(arrayInstrumentation, key, receiver)
+            }
+            if (!options.isReadOnly && typeof key !== 'symbol') {
                 track(target, key);
             }
             const res = Reflect.get(target, key, receiver);
@@ -112,7 +142,8 @@ export function createReactive(data, options = {}) {
             return Reflect.has(target, key);  
         },
         ownKeys(target) {
-            track(target, INERATE_KEY);
+            const type = Array.isArray(target) ? 'length' : INERATE_KEY;
+            track(target, type);
             return Reflect.ownKeys(target);
         },
         set(target, key, newVal, receiver) {
@@ -144,5 +175,6 @@ export function createReactive(data, options = {}) {
             return true;
         }
     });
-    return obj;
+    reactiveMap.set(data, proxy);
+    return proxy;
 }
