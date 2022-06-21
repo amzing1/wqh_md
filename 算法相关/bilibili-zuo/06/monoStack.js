@@ -39,7 +39,6 @@ class MonoStack {
   }
 
   getRes(idx) {
-    
     return this.bigThanMap.get(idx);
   }
 }
