@@ -260,6 +260,8 @@ function getValues<T, K extends keyof T>(userInfo: T, keys: k[]): T[K][] {
 
 * RetrunType：函数返回值类型
 
+* InstanceType: 实例的类型
+
   
 
 ### 在Ts中使用ESLint
