@@ -25,6 +25,23 @@ const plane = new Actor({
   maxTop: height
 });
 
+document.addEventListener('keydown', (e) => {
+  switch (e.key.toLocaleLowerCase()) {
+    case 'w':
+      plane.transform.translate(0, -1);
+      break;
+    case 's':
+      plane.transform.translate(0, 1);
+      break;
+    case 'a':
+      plane.transform.translate(-1, 0);
+      break;
+    case 'd':
+      plane.transform.translate(1, 0);
+      break;
+  }
+})
+
 
 
 

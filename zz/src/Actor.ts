@@ -1,3 +1,5 @@
+import { TransformComponent } from "./components/TransformComponent";
+
 export interface ActorProps {
   ctx: CanvasRenderingContext2D,
   img: HTMLImageElement,
@@ -17,9 +19,14 @@ type PartialProps = Partial<ActorProps>
 
 export class Actor {
   private props: ActorProps;
+  public transform: TransformComponent;
   constructor(props: ActorProps) {
     this.props = props;
+    this.transform = new TransformComponent(5, this);
     this.init();
+  }
+  getProps() {
+    return this.props;
   }
   init() {
     this.props.maxLeft = this.props.maxLeft - this.props.width;
@@ -45,11 +52,5 @@ export class Actor {
   update(props: PartialProps) {
     this.clear();
     this.reDraw(props);
-  }
-  translate(offsetX: number, offsetY: number) {
-    let { left, top } = this.props;
-    left += offsetX;
-    top += offsetY;
-    this.update({ left, top });
   }
 }
