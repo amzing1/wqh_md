@@ -5,8 +5,8 @@ export class SpriteComponent extends Component {
   private ctx: CanvasRenderingContext2D;
   private img: HTMLImageElement;
   private src: string;
-  private width: number;
-  private height: number;
+  public width: number;
+  public height: number;
   private sx: number;
   private sy: number;
   private sWidth: number;

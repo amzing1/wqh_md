@@ -1,5 +1,6 @@
 import { Component } from "./components/Component";
 import { SpriteComponent } from "./components/SpriteComponent";
+import { TransformComponent } from "./components/TransformComponent";
 import { Scene } from "./Scene";
 
 export class Actor {
@@ -7,18 +8,12 @@ export class Actor {
   public name: string;
   public shouldTick: boolean;
   private components: Component[];
+  public children: Actor[];
 
   constructor(name: string) {
     this.name = name;
     this.components = [];
-  }
-
-  setScene(scene: Scene) {
-    this.scene = scene;
-  }
-
-  getScene() {
-    return this.scene;
+    this.children = [];
   }
 
   addComponent(compoennt: Component) {
@@ -37,5 +32,10 @@ export class Actor {
   tick() {
     this.components.forEach(comp => comp.tick());
   }
+
+  addChildren(actor: Actor) {
+    this.children.push(actor);
+    (this.getComponent('Transform') as TransformComponent).computeChildTransform(actor);
+  } 
 
 }

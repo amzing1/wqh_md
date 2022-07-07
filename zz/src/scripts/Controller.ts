@@ -15,7 +15,7 @@ export class ControllerComponent extends Component {
     super();
     this.speed = speed;
     this.actions = new Set();
-    this.frequency = 1000;
+    this.frequency = 500;
     this.lastFireTime = 0;
     this.setName('Controller');
     this.init();
@@ -23,17 +23,18 @@ export class ControllerComponent extends Component {
 
   init() {
     document.addEventListener('keydown', (e) => {
+      console.log(e.key);
       switch (e.key.toLocaleLowerCase()) {
-        case 'w':
+        case 'arrowup':
           this.actions.add(Action.MOVE_TOP);
           break;
-        case 's':
+        case 'arrowdown':
           this.actions.add(Action.MOVE_BOTTOM);
           break;
-        case 'a':
+        case 'arrowleft':
           this.actions.add(Action.MOVE_LEFT);
           break;
-        case 'd':
+        case 'arrowright':
           this.actions.add(Action.MOVE_RIGHT);
           break;
         case 'q':
@@ -49,16 +50,16 @@ export class ControllerComponent extends Component {
     });
     document.addEventListener('keyup', (e) => {
       switch (e.key.toLocaleLowerCase()) {
-        case 'w':
+        case 'arrowup':
           this.actions.delete(Action.MOVE_TOP);
           break;
-        case 's':
+        case 'arrowdown':
           this.actions.delete(Action.MOVE_BOTTOM);
           break;
-        case 'a':
+        case 'arrowleft':
           this.actions.delete(Action.MOVE_LEFT);
           break;
-        case 'd':
+        case 'arrowright':
           this.actions.delete(Action.MOVE_RIGHT);
           break;
         case 'q':
@@ -113,15 +114,16 @@ export class ControllerComponent extends Component {
       return;
     }
     const transform = this.getActor().getComponent('Transform') as TransformComponent;
-    const ctx = (this.getActor().getComponent('Sprite') as SpriteComponent).getCtx();
-    const { x, y } = transform.position;
-    const bulletTransform = new TransformComponent({ x, y });
-    const bulletSprite = new SpriteComponent(ctx, new Image(), 'image/plasma.png', 96, 96, 0, 0, 96, 96);
-    const bulletController = new BulletController({ x: 0, y: -10 }, transform.rotation);
+    const sprite = (this.getActor().getComponent('Sprite') as SpriteComponent);
+    const ctx = sprite.getCtx();
+    const bulletTransform = new TransformComponent({ x: 0, y: 0 }, transform.rotation);
+    const bulletSprite = new SpriteComponent(ctx, new Image(), 'image/plasma.png', 40, 40, 0, 0, 96, 96);
+    const bulletController = new BulletController(10);
     const bullet = new Actor('bullet');
     bullet.addComponent(bulletTransform);
     bullet.addComponent(bulletSprite);
     bullet.addComponent(bulletController);
-    Scene.instance?.addActor(bullet);
+    this.getActor().addChildren(bullet);
+    this.lastFireTime = fireStart;
   }
 }

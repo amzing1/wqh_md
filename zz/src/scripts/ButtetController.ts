@@ -3,20 +3,29 @@ import { Component } from "../components/Component";
 import { TransformComponent } from "../components/TransformComponent";
 
 export class BulletController extends Component {
-  public speed: Speed;
-  public rotation: number;
-  constructor(speed: Speed, rotation: number) {
+  public speed: number;
+  private realSpeed: Speed;
+  constructor(speed: number) {
     super();
     this.speed = speed;
-    this.rotation = rotation;
+    this.realSpeed = { x: 0, y: -this.speed };
     this.setName('BulletController');
+  }
+
+  initSpeed() {
+    const transform = this.getActor().getComponent('Transform') as TransformComponent;
+    if (transform.rotation === 0) {
+      return;
+    }
+    this.realSpeed.x = this.speed * Math.sin(transform.rotation);
+    this.realSpeed.y = -this.speed * Math.cos(transform.rotation);
+    console.log(transform.rotation, this.realSpeed);
   }
 
   move() {
     const transform = this.getActor().getComponent('Transform') as TransformComponent;
-    transform.position.x += this.speed.x;
-    transform.position.y += this.speed.y;
-    transform.rotation += this.rotation * Math.PI / 180;
+    transform.position.x += this.realSpeed.x;
+    transform.position.y += this.realSpeed.y;
   }
 
   tick() {

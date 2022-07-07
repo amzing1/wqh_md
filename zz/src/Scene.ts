@@ -25,7 +25,6 @@ export class Scene {
     return { width, height };
   }
   addActor(actor: Actor) {
-    actor.setScene(this);
     this.actors.push(actor);
   }
   getActor(name: string) {
@@ -36,11 +35,18 @@ export class Scene {
     return actor;
   }
 
+  tickActors(actors: Actor[]) {
+    actors.forEach(item => {
+      if (item.children.length) {
+        this.tickActors(item.children);
+      }
+      item.tick();
+    })
+  }
+
   tick() {
     this.ctx.clearRect(0, 0, this.props.width, this.props.height);
-    this.actors.forEach(actor => {
-      actor.tick();
-    })
+    this.tickActors(this.actors);
     requestAnimationFrame(() => {
       this.tick();
     })
