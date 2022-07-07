@@ -1,46 +1,25 @@
 import { Actor } from "./Actor";
+import { SpriteComponent } from "./components/SpriteComponent";
+import { TransformComponent } from "./components/TransformComponent";
 import { Scene } from "./Scene";
+import { ControllerComponent } from "./scripts/Controller";
 
 const canvas = document.querySelector('.canvas') as HTMLCanvasElement;
 canvas.height = window.innerHeight;
 const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
 
-const scene = new Scene({ width: canvas.width, height: canvas.height });
+const scene = new Scene(ctx, { width: canvas.width, height: canvas.height });
 const { width, height } = scene.getSize();
 
-const planeImg = new Image();
-planeImg.src = 'image/ship.png';
-const plane = new Actor({
-  ctx,
-  img: planeImg,
-  width: 50,
-  height: 50,
-  left: (width - 50) / 2,
-  top: (height - 50) - 20,
-  sx: 0,
-  sy: 0,
-  sWidth: 24,
-  sHeight: 24,
-  maxLeft: width,
-  maxTop: height
-});
+const planeTransform = new TransformComponent({ x: (width - 50) / 2, y: (height / 2 - 50) - 2 });
+const planeSprite = new SpriteComponent(ctx, new Image(), 'image/ship.png', 40, 40, 0, 0, 24, 24);
+const planeController = new ControllerComponent({ x: 1, y: 1 });
 
-document.addEventListener('keydown', (e) => {
-  switch (e.key.toLocaleLowerCase()) {
-    case 'w':
-      plane.transform.translate(0, -1);
-      break;
-    case 's':
-      plane.transform.translate(0, 1);
-      break;
-    case 'a':
-      plane.transform.translate(-1, 0);
-      break;
-    case 'd':
-      plane.transform.translate(1, 0);
-      break;
-  }
-})
+const plane = new Actor('plane');
+plane.addComponent(planeTransform);
+plane.addComponent(planeSprite);
+plane.addComponent(planeController);
+scene.addActor(plane);
 
 
 

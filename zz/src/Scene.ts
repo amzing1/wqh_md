@@ -1,20 +1,48 @@
+import { Actor } from "./Actor";
+
 interface SceneProps {
   width: number,
   height: number
 }
 
 export class Scene {
+  private ctx: CanvasRenderingContext2D;
   private props: SceneProps;
-  private instance: Scene | null;
-  constructor(props: SceneProps) {
-    if (this.instance) {
-      return this.instance;
+  static instance: Scene | null;
+  private actors: Actor[];
+  constructor(ctx: CanvasRenderingContext2D, props: SceneProps) {
+    if (Scene.instance) {
+      return Scene.instance;
     }
+    this.ctx = ctx;
     this.props = props;
-    this.instance = this;
+    this.actors = []; 
+    Scene.instance = this;
+    this.tick();
   }
   getSize() {
     const { width, height } = this.props;
     return { width, height };
+  }
+  addActor(actor: Actor) {
+    actor.setScene(this);
+    this.actors.push(actor);
+  }
+  getActor(name: string) {
+    const actor = this.actors.find(actor => actor.name === name);
+    if (!actor) {
+      throw new Error('not found');
+    }
+    return actor;
+  }
+
+  tick() {
+    this.ctx.clearRect(0, 0, this.props.width, this.props.height);
+    this.actors.forEach(actor => {
+      actor.tick();
+    })
+    requestAnimationFrame(() => {
+      this.tick();
+    })
   }
 }

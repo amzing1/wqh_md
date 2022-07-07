@@ -1,18 +1,34 @@
-import { Actor } from "../Actor";
+import { Position, Rotation, Scale } from "../../types/type";
 import { Component } from "./Component";
 
-type Direction = 1 | -1 | 0
-
 export class TransformComponent extends Component {
-  private speed: number;
-  constructor(speed: number, actor: Actor) {
-    super(actor);
-    this.speed = speed;
+  public position: Position;
+  public rotation: Rotation;
+  public scale: Scale;
+  public maxLeft: number;
+  public maxTop: number;
+  constructor(
+    position: Position = { x: 0, y: 0 },
+    rotation: Rotation = 0,
+    scale: Scale = { x: 1, y: 1 },
+  ) {
+    super();
+    this.position = position;
+    this.rotation = rotation;
+    this.scale = scale;
+    this.setName('Transform');
+    Promise.resolve(() => {
+      const scene = this.getActor().getScene();
+      if (!scene) {
+        throw new Error('should add actor to a scene');
+      }
+      const { width, height } = scene.getSize();
+      this.setBoundary(width, height);
+    })
   }
-  translate(directionX: Direction, directionY: Direction) {
-    let { left, top } = this.actor.getProps();
-    left += directionX * this.speed;
-    top += directionY * this.speed;
-    this.actor.update({ left, top });
+
+  setBoundary(maxLeft: number, maxTop: number) {
+    this.maxLeft = maxLeft;
+    this.maxTop = maxTop;
   }
 }
