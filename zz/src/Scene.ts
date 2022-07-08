@@ -37,8 +37,8 @@ export class Scene {
 
   tickActors(actors: Actor[]) {
     actors.forEach(item => {
-      if (item.children.length) {
-        this.tickActors(item.children);
+      if (item.children.size) {
+        this.tickActors([...item.children]);
       }
       item.tick();
     })

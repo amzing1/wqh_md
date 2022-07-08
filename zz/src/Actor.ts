@@ -8,12 +8,14 @@ export class Actor {
   public name: string;
   public shouldTick: boolean;
   private components: Component[];
-  public children: Actor[];
+  public children: Set<Actor>;
+  public parent: Actor | null;
 
   constructor(name: string) {
     this.name = name;
     this.components = [];
-    this.children = [];
+    this.children = new Set();
+    this.parent = null;
   }
 
   addComponent(compoennt: Component) {
@@ -34,8 +36,8 @@ export class Actor {
   }
 
   addChildren(actor: Actor) {
-    this.children.push(actor);
+    this.children.add(actor);
+    actor.parent = this;
     (this.getComponent('Transform') as TransformComponent).computeChildTransform(actor);
-  } 
-
+  }
 }

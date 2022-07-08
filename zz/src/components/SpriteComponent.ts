@@ -11,6 +11,7 @@ export class SpriteComponent extends Component {
   private sy: number;
   private sWidth: number;
   private sHeight: number;
+  public visible: boolean;
   constructor(ctx: CanvasRenderingContext2D, img: HTMLImageElement, src: string, width: number = 20, height: number = 20, sx: number = 0, sy :number = 0, sWidth: number = 0, sHeight: number = 0) {
     super();
     this.ctx = ctx;
@@ -23,6 +24,7 @@ export class SpriteComponent extends Component {
     this.sWidth = sWidth;
     this.sHeight = sHeight;
     this.setName('Sprite');
+    this.visible = true;
     this.init();
   }
   init() {
@@ -38,7 +40,9 @@ export class SpriteComponent extends Component {
     this.ctx.save();
     this.ctx.translate(x + this.width / 2, y + this.height / 2);
     this.ctx.rotate(rotation);
-    this.ctx.drawImage(this.img, this.sx, this.sy, this.sWidth, this.sHeight, -this.width / 2, -this.height / 2, this.width, this.height);
+    if (this.visible) {
+      this.ctx.drawImage(this.img, this.sx, this.sy, this.sWidth, this.sHeight, -this.width / 2, -this.height / 2, this.width, this.height);
+    }
     this.ctx.restore();
   }
   tick() {
