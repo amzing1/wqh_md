@@ -21,30 +21,13 @@ export class TransformComponent extends Component {
     this.rotation = rotation;
     this.scale = scale;
     this.setName('Transform');
-    Promise.resolve().then(() => {
-      const scene = Scene.instance;
-      if (!scene) {
-        throw new Error('should add a scene');
-      }
-      const sprite = this.getActor().getComponent('Sprite') as SpriteComponent;
-      this.position.x -= sprite.width / 2;
-      this.position.y -= sprite.height / 2;
-      const { width, height } = scene.getSize();
-      this.setBoundary(width, height);
-    })
   }
 
-  setBoundary(maxLeft: number, maxTop: number) {
-    this.maxLeft = maxLeft;
-    this.maxTop = maxTop;
-  }
 
   computeChildTransform(actor: Actor) {
     const transform = actor.getComponent('Transform') as TransformComponent;
-    const sprite = actor.getComponent('Sprite') as SpriteComponent;
-    const { width, height } = sprite;
-    transform.position.x += this.position.x + width / 2;
-    transform.position.y += this.position.y + height / 2;
+    transform.position.x += this.position.x;
+    transform.position.y += this.position.y;
     const bulletController = actor.getComponent('BulletController') as BulletController;
     if (bulletController) {
       bulletController.initSpeed();

@@ -10,13 +10,15 @@ export class Actor {
   private components: Component[];
   public children: Set<Actor>;
   public parent: Actor | null;
-
+  public isDie: boolean = false;
   constructor(name: string) {
     this.name = name;
     this.components = [];
     this.children = new Set();
     this.parent = null;
   }
+
+
 
   addComponent(compoennt: Component) {
     compoennt.setActor(this);
@@ -26,13 +28,24 @@ export class Actor {
   getComponent(name: string) {
     const component = this.components.find(component => component.name === name);
     if (!component) {
-      throw new Error('not found');
+      return;
     }
     return component;
   }
 
+  getChildren(name: string) {
+    let res: Actor[] = [];
+    this.children.forEach(c => {
+      if (c.name === name) {
+        res.push(c);
+      }
+    })
+    return res;
+  }
+
   tick() {
-    this.components.forEach(comp => comp.tick());
+    if (!this.isDie)
+      this.components.forEach(comp => comp.tick());
   }
 
   addChildren(actor: Actor) {

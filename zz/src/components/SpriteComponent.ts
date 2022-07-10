@@ -32,13 +32,12 @@ export class SpriteComponent extends Component {
     this.img.onload = () => {
       const transform = this.getActor().getComponent('Transform') as TransformComponent;
       const { x, y } = transform.position;
-      transform.setBoundary(transform.maxLeft - this.width, transform.maxTop - this.height);
       this.draw(x, y, 0);
     }
   }
   draw(x: number, y: number, rotation: number) {
     this.ctx.save();
-    this.ctx.translate(x + this.width / 2, y + this.height / 2);
+    this.ctx.translate(x, y);
     this.ctx.rotate(rotation);
     if (this.visible) {
       this.ctx.drawImage(this.img, this.sx, this.sy, this.sWidth, this.sHeight, -this.width / 2, -this.height / 2, this.width, this.height);

@@ -17,10 +17,16 @@ enum Action {
   FIRE
 }
 
+enum Shape {
+  SQUARE,
+  CIRCLE
+}
+
 export {
   Position,
   Rotation,
   Scale,
   Speed,
-  Action
+  Action,
+  Shape
 }

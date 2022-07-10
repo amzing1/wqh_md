@@ -9,12 +9,14 @@ export class Scene {
   private ctx: CanvasRenderingContext2D;
   private props: SceneProps;
   static instance: Scene | null;
+  static ctx: CanvasRenderingContext2D;
   private actors: Actor[];
   constructor(ctx: CanvasRenderingContext2D, props: SceneProps) {
     if (Scene.instance) {
       return Scene.instance;
     }
     this.ctx = ctx;
+    Scene.ctx = ctx;
     this.props = props;
     this.actors = []; 
     Scene.instance = this;
@@ -27,12 +29,9 @@ export class Scene {
   addActor(actor: Actor) {
     this.actors.push(actor);
   }
-  getActor(name: string) {
-    const actor = this.actors.find(actor => actor.name === name);
-    if (!actor) {
-      throw new Error('not found');
-    }
-    return actor;
+  getActor(name: string): Actor[] {
+    const actors = this.actors.filter(actor => actor.name === name);
+    return actors;
   }
 
   tickActors(actors: Actor[]) {
