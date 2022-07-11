@@ -6,6 +6,12 @@ type Rotation = number
 type Scale = Position
 type Speed = Position
 
+enum ComponentType {
+  TRANSFORM,
+  SPRITE,
+  CONTROLLER,
+  COLLIDER_2D
+}
 
 enum Action {
   MOVE_LEFT,
@@ -27,6 +33,7 @@ export {
   Rotation,
   Scale,
   Speed,
+  ComponentType,
   Action,
   Shape
 }
