@@ -6,8 +6,8 @@ import { TransformComponent } from "./Transform";
 
 export class SpriteComponent extends Component {
   public visible: boolean;
-  constructor(actor?: Actor) {
-    actor ? super(ComponentType.SPRITE, actor) : super(ComponentType.SPRITE);
+  constructor(actor: Actor) {
+    super(actor, ComponentType.SPRITE);
     this.visible = true;
   }
   draw(callback?: Function) {

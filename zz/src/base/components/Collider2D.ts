@@ -6,10 +6,8 @@ import { TransformComponent } from "./Transform";
 export class Collider2DComponent extends Component {
   private width: number;
   private height: number;
-  constructor(width: number, height: number)
-  constructor(width: number, height: number, actor: Actor)
-  constructor(width: number, height: number, actor?: Actor) {
-    actor ? super(ComponentType.COLLIDER_2D, actor) : super(ComponentType.COLLIDER_2D);
+  constructor(actor: Actor, width: number, height: number) {
+    super(actor, ComponentType.COLLIDER_2D);
     this.width = width;
     this.height = height;
   }

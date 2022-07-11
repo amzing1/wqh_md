@@ -1,6 +1,7 @@
 
 import { ComponentType } from "../../types/type";
 import { Component } from "./components/Component";
+import { SpriteComponent } from "./components/Sprite";
 import { TransformComponent } from "./components/Transform";
 
 export class Actor {
@@ -18,7 +19,7 @@ export class Actor {
     this.componentMap.set(component.name, component);
   }
 
-  getComponent(name: ComponentType) {
+  getComponent<T>(name: ComponentType) {
     const component = this.componentMap.get(name);
     return component || null;
   }
@@ -33,14 +34,32 @@ export class Actor {
     return res;
   }
 
-  tick() {
-    if (!this.isDie)
+  tick(fns: Function[]) {
+    if (!this.isDie) {
+      fns.forEach(fn => fn());
       this.componentMap.forEach(comp => comp.tick());
+    }
+  }
+
+  hiddenSelf() {
+    this.isDie = true;
+    if (this.parent) {
+      this.parent.children.delete(this);
+      this.parent = null;
+    }
+  }
+
+  init(parent: Actor) {
+    const parentTransform = parent.getComponent(ComponentType.TRANSFORM) as TransformComponent;
+    const selfTransform = this.getComponent(ComponentType.TRANSFORM) as TransformComponent;
+    selfTransform.position.x += parentTransform.position.x;
+    selfTransform.position.y += parentTransform.position.y;
+    selfTransform.rotation += parentTransform.rotation;
   }
 
   addChildren(actor: Actor) {
     this.children.add(actor);
     actor.parent = this;
-    (this.getComponent(ComponentType.TRANSFORM) as TransformComponent).computeChildTransform(actor);
+    actor.init(this);
   }
 }
