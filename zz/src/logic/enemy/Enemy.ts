@@ -1,6 +1,8 @@
 import { ComponentType, Speed } from "../../../types/type";
 import { Actor } from "../../base/Actor";
+import { AudioPlayerComponent } from "../../base/components/AudioPlayer";
 import { Collider2DComponent } from "../../base/components/Collider2D";
+import { SpriteImageComponent } from "../../base/components/SpriteImage";
 import { TransformComponent } from "../../base/components/Transform";
 import { Scene } from "../../base/Scene";
 import { Level } from "../../level/level";
@@ -32,7 +34,7 @@ export class Enemy extends Actor {
       this.speed.x = -this.speed.x;
     }
     if (transform.position.y > height + 10) {
-      this.hiddenSelf();
+      this.die();
       Enemy.enemyPool.add(this);
     }
   }
@@ -67,17 +69,19 @@ export class Enemy extends Actor {
     
     // 敌人碰到玩家，玩家死亡
     collider.onCollision(player, () => {
-      player.hiddenSelf();
+      player.die();
+      (player.getComponent(ComponentType.AUDIO_PLAYER) as AudioPlayerComponent).play('mp3/boom.mp3');
     })
     
     // 玩家子弹击中敌人，敌人死亡，子弹死亡
     if (playerBullets.length) {
       playerBullets.forEach(bullet => {
         collider.onCollision(bullet, () => {
-          this.hiddenSelf();
+          this.die();
           Enemy.enemyPool.add(this);
-          bullet.hiddenSelf();
+          bullet.die();
           PlayerBullet.bulletPool.add(bullet);
+          (this.getComponent(ComponentType.AUDIO_PLAYER) as AudioPlayerComponent).play();
         })
       })
     }
@@ -85,5 +89,12 @@ export class Enemy extends Actor {
 
   tick() {
     super.tick([() => this.fire(), () => this.move(), () => this.onCollider()]);
+  }
+
+  die() {
+    const transform = this.getComponent(ComponentType.TRANSFORM) as TransformComponent;
+    const { x, y } = transform.position;
+    Level.initBoomEffect(x, y);
+    super.die();
   }
 }

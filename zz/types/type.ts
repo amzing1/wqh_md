@@ -10,7 +10,8 @@ enum ComponentType {
   TRANSFORM,
   SPRITE,
   CONTROLLER,
-  COLLIDER_2D
+  COLLIDER_2D,
+  AUDIO_PLAYER
 }
 
 enum Action {

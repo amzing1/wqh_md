@@ -5,6 +5,7 @@ import { Scene } from "../../base/Scene";
 import { SpriteImageComponent } from "../../base/components/SpriteImage";
 import { PlayerControllerComponent } from "./PlayerController";
 import { Level } from "../../level/level";
+import { AudioPlayerComponent } from "../../base/components/AudioPlayer";
 
 export class Player extends Actor {
   public speed: Speed;
@@ -65,6 +66,8 @@ export class Player extends Actor {
       return;
     }
     let bullet: Actor = Level.initPlayerBullet();
+    const audioComp = this.getComponent(ComponentType.AUDIO_PLAYER) as AudioPlayerComponent;
+    audioComp.play();
     this.addChildren(bullet);
     this.lastFireTime = fireStart;
   }

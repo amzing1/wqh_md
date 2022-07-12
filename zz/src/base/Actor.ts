@@ -41,12 +41,12 @@ export class Actor {
     }
   }
 
-  hiddenSelf() {
-    this.isDie = true;
+  die() {
     if (this.parent) {
       this.parent.children.delete(this);
       this.parent = null;
     }
+    this.isDie = true;
   }
 
   init(parent: Actor) {

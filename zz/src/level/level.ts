@@ -1,10 +1,13 @@
 import { ComponentType, Shape } from "../../types/type";
+import { Actor } from "../base/Actor";
+import { AudioPlayerComponent } from "../base/components/AudioPlayer";
 import { Collider2DComponent } from "../base/components/Collider2D";
 import { SpriteComponent } from "../base/components/Sprite";
 import { SpriteImageComponent } from "../base/components/SpriteImage";
 import { SpriteShapeComponent } from "../base/components/SpriteShape";
 import { TransformComponent } from "../base/components/Transform";
 import { Scene } from "../base/Scene";
+import { BoomEffect } from "../logic/boom/BoomEffect";
 import { Enemy } from "../logic/enemy/Enemy";
 import { EnemyBullet } from "../logic/enemyBullet/EnemyBullet";
 import { Player } from "../logic/player/Player";
@@ -25,6 +28,7 @@ export class Level {
     new SpriteImageComponent(player, new Image(), 'image/ship.png', 40, 40, 0, 0, 24, 24);
     new PlayerControllerComponent(player);
     new Collider2DComponent(player, 40, 40);
+    new AudioPlayerComponent(player, 'mp3/shot.mp3');
 
     Level.player = player;
     scene.addActor(player);
@@ -59,6 +63,7 @@ export class Level {
     new TransformComponent(enemy, { x, y }, Math.PI);
     new SpriteImageComponent(enemy, new Image(), 'image/ship.png', 24, 24, 120, 0, 24, 24);
     new Collider2DComponent(enemy, 24, 24);
+    new AudioPlayerComponent(enemy, 'mp3/boom.mp3');
     scene.addActor(enemy);
     return enemy;
   }
@@ -78,5 +83,21 @@ export class Level {
       new Collider2DComponent(bullet, 8, 8);
     }
     return bullet;
+  }
+
+  static initBgm() {
+    Promise.resolve().then(() => {
+      const bgmActor = new Actor('bgm');
+      new AudioPlayerComponent(bgmActor, 'mp3/bgm.mp3');
+      const audioComp = bgmActor.getComponent(ComponentType.AUDIO_PLAYER) as AudioPlayerComponent;
+      audioComp.audio.play();
+    })
+  }
+
+  static initBoomEffect(x: number, y: number) {
+    const boomActor = new BoomEffect('boomEffect');
+    new TransformComponent(boomActor, { x, y });
+    new SpriteImageComponent(boomActor,  new Image(), 'image/explosion.png', 64, 64, 0, 0, 64, 64);
+    Scene.instance?.addActor(boomActor);
   }
 }

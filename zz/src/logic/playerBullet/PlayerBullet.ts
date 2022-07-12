@@ -29,7 +29,7 @@ export class PlayerBullet extends Actor {
     const { width, height } = scene;
     const { x, y } = transform.position;
     if (x < 0 || x > width || y < 0 || y > height) {
-      this.hiddenSelf();
+      this.die();
       PlayerBullet.bulletPool.add(this);
     }
   }

@@ -1,5 +1,6 @@
 import { ComponentType, Speed } from "../../../types/type";
 import { Actor } from "../../base/Actor";
+import { AudioPlayerComponent } from "../../base/components/AudioPlayer";
 import { Collider2DComponent } from "../../base/components/Collider2D";
 import { TransformComponent } from "../../base/components/Transform";
 import { Scene } from "../../base/Scene";
@@ -21,18 +22,18 @@ export class EnemyBullet extends Actor {
     const { width, height } = scene;
     const { x, y } = transform.position;
     if (x < 0 || x > width || y > height) {
-      this.hiddenSelf();
+      this.die();
       EnemyBullet.bulletPool.add(this);
     }
   }
   onCollider() {
     // 敌人子弹击中玩家
-    if (!Level.player) {
-      throw Error('no player');
-    }
+    const player = Level.player as Player;
     const collider = this.getComponent(ComponentType.COLLIDER_2D) as Collider2DComponent;
-    collider.onCollision(Level.player, () => {
-      (Level.player as Player).isDie = true;
+    collider.onCollision(player, () => {
+      player.die();
+      const audio = player.getComponent(ComponentType.AUDIO_PLAYER) as AudioPlayerComponent;
+      audio.play('mp3/boom.mp3');
     })
   }
 
