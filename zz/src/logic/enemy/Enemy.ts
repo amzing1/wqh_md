@@ -59,9 +59,6 @@ export class Enemy extends Actor {
       throw Error('no player');
     }
     const playerBullets = player.getChildren('playerBullet') as PlayerBullet[];
-    if (playerBullets.length) {
-      console.log(playerBullets.length);
-    }
     const collider = this.getComponent(ComponentType.COLLIDER_2D) as Collider2DComponent;
     if (!collider) {
       return;

@@ -23,6 +23,11 @@ export class Player extends Actor {
     super.tick([() => this.action()]);
   }
 
+  die() {
+    super.die();
+    Scene.gameOver = true;
+  }
+
   action() {
     const transform = this.getComponent(ComponentType.TRANSFORM) as TransformComponent;
     const scene = Scene.instance as Scene;

@@ -1,4 +1,5 @@
 import { Scene } from "./base/Scene";
+import { GameLogic } from "./gameLogic";
 import { Level } from "./level/level";
 
 
@@ -9,9 +10,8 @@ const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
 new Scene(ctx, canvas.width, canvas.height);
 Level.initBgm();
 Level.initPlayer();
-for (let i = 0; i < 10; i++) {
-  const enemy = Level.initEnemy();
-}
+
+new GameLogic('gameLogic');
 
 
 

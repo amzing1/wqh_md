@@ -3,6 +3,7 @@ import { ComponentType } from "../../types/type";
 import { Component } from "./components/Component";
 import { SpriteComponent } from "./components/Sprite";
 import { TransformComponent } from "./components/Transform";
+import { Scene } from "./Scene";
 
 export class Actor {
   public name: string;
@@ -34,9 +35,9 @@ export class Actor {
     return res;
   }
 
-  tick(fns: Function[]) {
+  tick(fns?: Function[]) {
     if (!this.isDie) {
-      fns.forEach(fn => fn());
+      fns && fns.forEach(fn => fn());
       this.componentMap.forEach(comp => comp.tick());
     }
   }

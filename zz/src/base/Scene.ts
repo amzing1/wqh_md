@@ -6,6 +6,7 @@ export class Scene {
   static instance: Scene | null;
   static ctx: CanvasRenderingContext2D;
   private actorMap: Map<string, Set<Actor>>;
+  static gameOver: boolean;
   constructor(ctx: CanvasRenderingContext2D, width: number, height: number) {
     if (Scene.instance) {
       return Scene.instance;
@@ -13,8 +14,9 @@ export class Scene {
     Scene.ctx = ctx;
     this.width = width;
     this.height = height;
-    this.actorMap = new Map(); 
+    this.actorMap = new Map();
     Scene.instance = this;
+    Scene.gameOver = false;
     this.tick();
   }
   addActor(actor: Actor) {
@@ -31,21 +33,21 @@ export class Scene {
   }
 
   tickActors(actors: Set<Actor>) {
-    actors.forEach(actor => {
+    actors.forEach((actor) => {
       if (actor.children.size) {
         this.tickActors(actor.children);
       }
       actor.tick();
-    })
+    });
   }
 
   tick() {
     Scene.ctx.clearRect(0, 0, this.width, this.height);
-    this.actorMap.forEach(actors => {
+    this.actorMap.forEach((actors) => {
       this.tickActors(actors);
-    })
+    });
     requestAnimationFrame(() => {
       this.tick();
-    })
+    });
   }
 }

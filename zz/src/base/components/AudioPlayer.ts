@@ -14,6 +14,8 @@ export class AudioPlayerComponent extends Component {
     if (src) {
       this.audio.src = src;
     }
-    this.audio.play();
+    Promise.resolve().then(() => {
+      this.audio.play();
+    })
   }
 }

@@ -10,7 +10,6 @@ export class BoomEffect extends Actor {
   }
 
   autoDie() {
-    console.log(this.initTime);
     if (performance.now() - this.initTime > this.duration) {
       this.die();
     }
