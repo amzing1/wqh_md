@@ -20,7 +20,7 @@ export class PlayerControllerComponent extends Component {
         case 'arrowright':
           this.actions.add(Action.MOVE_RIGHT);
           break;
-        case 'space':
+        case ' ':
           this.actions.add(Action.JUMP);
           break;
       }

@@ -17,7 +17,7 @@ export class Level {
     const scene = Scene.instance as Scene;
     const { width, height } = scene;
 
-    const player = new Player({ x: 1, y: 2 });
+    const player = new Player({ x: 1, y: 0.2 });
     // 精灵图每个单元的宽高
     const sWidth = 112;
     const sHeight = 133;
@@ -39,7 +39,7 @@ export class Level {
             group = [];
             break;
           case 42 - 17:
-            animations.push(new Animation('run', group));
+            animations.push(new Animation('run', group, true));
             group = [];
             break;
           case 51 - 17:

@@ -21,11 +21,15 @@ export class AnimationStateMachineComponent extends Component {
     if (!animComp) {
       throw Error('no anim comp');
     }
-    if (animComp.curAnim === name) {
-      return;
+    animComp.setAnim(name);
+  }
+
+  getCurAnim() {
+    const animComp = this.getActor().getComponent(ComponentType.ANIMATION) as AnimationComponent;
+    if (!animComp) {
+      throw Error('no anim comp');
     }
-    console.log(animComp.curAnim, name, 'set anim');
-    animComp.curAnim = name;
-    animComp.curAnimIdx = 0;
+    const curAnim = animComp.getCurAnimation();
+    return curAnim;
   }
 }
