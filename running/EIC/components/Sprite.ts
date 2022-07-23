@@ -1,6 +1,7 @@
-import { ComponentType } from "../../../types/type";
-import { Actor } from "../Actor";
-import { Scene } from "../Scene";
+import { Actor } from "../base/Actor";
+import { Canvas } from "../base/Canvas";
+import { Scene } from "../base/Scene";
+import { ComponentType } from "../type/type";
 import { Component } from "./Component";
 import { TransformComponent } from "./Transform";
 
@@ -15,13 +16,13 @@ export class SpriteComponent extends Component {
     if (this.visible && callback) {
       const transform = this.getActor().getComponent(ComponentType.TRANSFORM) as TransformComponent;
       const { x, y } = transform.position;
-      Scene.ctx.save();
-      Scene.ctx.translate(x, y);
-      Scene.ctx.rotate(transform.rotation);
-      this.isMirror && Scene.ctx.scale(-1, 1);
-      Scene.ctx.beginPath();
+      Canvas.ctx.save();
+      Canvas.ctx.translate(x, y);
+      Canvas.ctx.rotate(transform.rotation);
+      this.isMirror && Canvas.ctx.scale(-1, 1);
+      Canvas.ctx.beginPath();
       callback();
-      Scene.ctx.restore();
+      Canvas.ctx.restore();
     }
   }
   tick() {}

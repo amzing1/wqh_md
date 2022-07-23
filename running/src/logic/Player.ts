@@ -1,10 +1,15 @@
-import { ComponentType, Action, Speed } from "../../types/type";
-import { Actor } from "../base/Actor";
-import { SpriteImageComponent } from "../base/components/SpriteImage";
-import { TransformComponent } from "../base/components/Transform";
-import { Scene } from "../base/Scene";
+
+
+import { Actor } from "../../EIC/base/Actor";
+import { Canvas } from "../../EIC/base/Canvas";
+import { TransformComponent } from "../../EIC/components/Transform";
 import { PlayerASM } from "./PlayerASM";
-import { PlayerControllerComponent } from "./PlayerController";
+import {SpriteImageComponent} from '../../EIC/components/SpriteImage';
+import { Event } from "../../EIC/base/Event";
+import { ComponentType, Speed } from "../../EIC/type/type";
+import { RigidBodyComponent } from "../../EIC/components";
+import { Vec2 } from "planck";
+import { Physics } from "../../EIC/base/Physics";
 
 export class Player extends Actor {
   private speed: Speed;
@@ -24,12 +29,12 @@ export class Player extends Actor {
   }
 
   tick() {
-    super.tick([() => this.action()]);
+    // this.action();
+    super.tick();
   }
 
   die() {
-    super.die();
-    Scene.gameOver = true;
+    this.die();
   }
 
   jump(transform: TransformComponent, asm: PlayerASM) {
@@ -57,32 +62,38 @@ export class Player extends Actor {
 
   action() {
     const transform = this.getComponent(ComponentType.TRANSFORM) as TransformComponent;
-    const scene = Scene.instance as Scene;
-    const { width, height } = scene;
-    const sprite = this.getComponent(ComponentType.SPRITE) as SpriteImageComponent;
-    const controller = this.getComponent(ComponentType.CONTROLLER) as PlayerControllerComponent;
-    const asm = this.getComponent(ComponentType.ANIMATION_STATE_MACHINE) as PlayerASM;
-    if (!controller.actions.size) {
+    const asm = this.getComponent(ComponentType.ANIMATION_STATE_MACHINE) as unknown as PlayerASM;
+    const body = this.getComponent(ComponentType.RIGID_BODY) as RigidBodyComponent;
+    if (!Event.keyActions.size) {
       asm.init();
     }
-    controller.actions.forEach(val => {
+    Event.keyActions.forEach(val => {
       switch (val) {
-        case Action.MOVE_LEFT:
-          transform.position.x -= this.speed.x;
-          transform.position.x = transform.position.x < 0 ? 0 : transform.position.x;
-          asm.isRun = true;
+        case 'arrowleft':
           asm.isMirror = false;
-          break;
-        case Action.MOVE_RIGHT:
-          transform.position.x += this.speed.x;
-          transform.position.x = transform.position.x > width - sprite.width ? width - sprite.width : transform.position.x;
+          transform.position.x -= this.speed.x;
           asm.isRun = true;
-          asm.isMirror = true;
           break;
-        case Action.JUMP:
+        case 'arrowright':
+          asm.isMirror = true;
+          // if (controller.actions.has(Action.LIGHT_ATTACK)) {
+          //   return;
+          // }
+          transform.position.x += this.speed.x;
+          asm.isRun = true;
+          break;
+        case ' ':
           this.inJump = true;
           this.jump(transform, asm);
           break;
+        case 'x':
+          asm.isLightAttack = true;
+          break;
+        case 'd':
+          // body.body.applyForce(Vec2(10, 0), body.body.getWorldCenter());
+          // Physics.drawPhysicsBody();
+          break;
+
       }
     })
   }

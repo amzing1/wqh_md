@@ -1,9 +1,8 @@
+import { Component } from '../components/Component';
+import { TransformComponent } from '../components/Transform';
+import { ComponentType } from '../type/type';
+import { Scene } from './Scene';
 
-import { ComponentType } from "../../types/type";
-import { Component } from "./components/Component";
-import { SpriteComponent } from "./components/Sprite";
-import { TransformComponent } from "./components/Transform";
-import { Scene } from "./Scene";
 
 export class Actor {
   public name: string;
@@ -20,9 +19,12 @@ export class Actor {
     this.componentMap.set(component.name, component);
   }
 
-  getComponent<T>(name: ComponentType) {
+  getComponent(name: ComponentType) {
     const component = this.componentMap.get(name);
-    return component || null;
+    if (!component) {
+      throw Error(`no component called ${name} in actor`);
+    }
+    return component;
   }
 
   getChildren(name: string) {
@@ -35,10 +37,12 @@ export class Actor {
     return res;
   }
 
-  tick(fns?: Function[]) {
+  tick() {
     if (!this.isDie) {
-      fns && fns.forEach(fn => fn());
       this.componentMap.forEach(comp => comp.tick());
+      this.children.forEach(actor => {
+        actor.tick();
+      })
     }
   }
 
@@ -61,6 +65,11 @@ export class Actor {
   addChildren(actor: Actor) {
     this.children.add(actor);
     actor.parent = this;
-    actor.init(this);
+    if (this !== Scene.instance) actor.init(this);
+  }
+
+  getTransform() {
+    const trans = this.getComponent(ComponentType.TRANSFORM) as TransformComponent;
+    return trans;
   }
 }

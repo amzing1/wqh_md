@@ -1,7 +1,6 @@
-import { ComponentType } from "../../types/type";
-import { Actor } from "../base/Actor";
-import { AnimationComponent } from "../base/components/Animation";
-import { AnimationStateMachineComponent } from "../base/components/AnimationStateMachine";
+
+import { Actor } from "../../EIC/base/Actor";
+import { AnimationStateMachineComponent } from '../../EIC/components'
 import { Player } from "./Player";
 
 export class PlayerASM extends AnimationStateMachineComponent {
@@ -24,11 +23,13 @@ export class PlayerASM extends AnimationStateMachineComponent {
   init() {
     this.isRun = false;
     this.isRasing = true;
+    this.height = 0;
+    this.isLightAttack = false;
     this.initAutoNext();
   }
 
   initAutoNext() {
-    const animComp = this.getActor().getComponent(ComponentType.ANIMATION) as AnimationComponent;
+    const animComp = this.getAnimations();
     const rasing = animComp.animations.get('jump-rasing');
     const rasing2fall = animComp.animations.get('rasing-to-fall');
     if (!rasing || !rasing2fall) {
@@ -38,35 +39,43 @@ export class PlayerASM extends AnimationStateMachineComponent {
   }
 
   tick() {
-    const curAnim = this.getCurAnim();
-    const jumpHeight = (this.getActor() as Player).jumpHeight;
+    const animations = this.getAnimations().animations;
     this.setIsMirror(this.isMirror);
-    let curState = 'idle';
+    let curAnim = animations.get('idle');
     if (this.isRun) {
-      curState = 'run';
+      curAnim = animations.get('run');
     }
-    if (this.height > 0) {
-      if (this.height < jumpHeight - 10) {
-        curState = 'jump-rasing';
-      } else {
-        curState = 'rasing-to-fall';
-        this.isRasing = false;
-      }
-      if (!this.isRasing && this.height < jumpHeight - 10) {
-        curState = 'falling';
-      }
-      if (!this.isRasing && this.height <= 5) {
-        curState = 'landing';
-      }
-      if (!this.isRasing && this.height <= 0) {
-        curState = 'idle';
-        this.isRasing = true;
-      }
+    if (this.isLightAttack) {
+      curAnim = animations.get('light-attack-combo');
     }
-    
+    // if (this.height > 0) {
+    //   if (this.height < jumpHeight - 10) {
+    //     curAnim = animations.get('jump-rasing')
+    //   } else {
+    //     curAnim = animations.get('rasing-to-fall')
+    //     this.isRasing = false;
+    //   }
+    //   if (!this.isRasing && this.height < jumpHeight - 10) {
+    //     curAnim = animations.get('falling')
+    //   }
+    //   if (!this.isRasing && this.height <= 5) {
+    //     curAnim = animations.get('landing')
+    //   }
+    //   if (!this.isRasing && this.height <= 0) {
+    //     curAnim = animations.get('idle')
+    //     this.isRasing = true;
+    //   }
+    // }
+    if (!curAnim) {
+      return;
+    }
+    // if (curAnim.name !== 'jump-rasing') {
+    //   (animations.get('jump-rasing') as Animation).isOver = false;
+    // }
     if (curAnim.isOver && curAnim.autoNext) {
-      curState = curAnim.autoNext.name;
+      curAnim = curAnim.autoNext;
     }
-    this.setAnim(curState);
+    this.setAnim(curAnim.name);
+    super.tick();
   }
 }

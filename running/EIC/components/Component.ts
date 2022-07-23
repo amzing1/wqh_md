@@ -1,5 +1,6 @@
-import { ComponentType } from "../../../types/type";
-import { Actor } from "../Actor";
+import { Actor } from "../base/Actor";
+import { ComponentType } from "../type/type";
+
 
 export class Component {
   private actor: Actor;

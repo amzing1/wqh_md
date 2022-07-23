@@ -1,6 +1,7 @@
-import { ComponentType } from "../../../types/type";
-import { Actor } from "../Actor";
-import { Scene } from "../Scene";
+
+import { Actor } from "../base/Actor";
+import { Canvas } from "../base/Canvas";
+import { Scene } from "../base/Scene";
 import { Component } from "./Component";
 import { SpriteComponent } from "./Sprite";
 import { TransformComponent } from "./Transform";
@@ -39,9 +40,9 @@ export class SpriteImageComponent extends SpriteComponent {
   draw() {
     super.draw(() => {
       if (this.sx !== undefined && this.sy !== undefined && this.sWidth && this.sHeight) {
-        Scene.ctx.drawImage(this.img, this.sx, this.sy, this.sWidth, this.sHeight, -this.width / 2, -this.height / 2, this.width, this.height)
+        Canvas.ctx.drawImage(this.img, this.sx, this.sy, this.sWidth, this.sHeight, 0, 0, this.width, this.height)
       } else {
-        Scene.ctx.drawImage(this.img, -this.width / 2, -this.height / 2, this.width, this.height);
+        Canvas.ctx.drawImage(this.img, 0, 0, this.width, this.height);
       }
     })
   }

@@ -1,10 +1,9 @@
-import { Shape } from "../../../types/type";
-import { Actor } from "../Actor";
-import { Scene } from "../Scene";
-import { Component } from "./Component";
-import { SpriteComponent } from "./Sprite";
-import { TransformComponent } from "./Transform";
 
+import { Actor } from "../base/Actor";
+import { Canvas } from "../base/Canvas";
+import { Scene } from "../base/Scene";
+import { Shape } from "../type/type";
+import { SpriteComponent } from "./Sprite";
 
 export class SpriteShapeComponent extends SpriteComponent {
   private color: string;
@@ -27,12 +26,12 @@ export class SpriteShapeComponent extends SpriteComponent {
 
   draw() {
     super.draw(() => {
-      Scene.ctx.fillStyle = this.color;
+      Canvas.ctx.fillStyle = this.color;
       if (this.shape === Shape.CIRCLE) {
-        Scene.ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
-        Scene.ctx.fill();
+        Canvas.ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
+        Canvas.ctx.fill();
       } else {
-        Scene.ctx.fillRect(0, 0, this.width, this.height);
+        Canvas.ctx.fillRect(0, 0, this.width, this.height);
       }
     })
   }

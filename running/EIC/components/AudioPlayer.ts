@@ -1,5 +1,5 @@
-import { ComponentType } from "../../../types/type";
-import { Actor } from "../Actor";
+import { Actor } from "../base/Actor";
+import { ComponentType } from "../type/type";
 import { Component } from "./Component";
 
 export class AudioPlayerComponent extends Component {

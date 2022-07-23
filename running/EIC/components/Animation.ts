@@ -1,7 +1,6 @@
-import { ComponentType } from "../../../types/type";
-import { Actor } from "../Actor";
+import { Actor } from "../base/Actor";
+import { ComponentType } from "../type/type";
 import { Component } from "./Component";
-import { SpriteComponent } from "./Sprite";
 import { SpriteImageComponent } from "./SpriteImage";
 
 export class Animation {
@@ -30,7 +29,6 @@ export class AnimationComponent extends Component {
     animations.forEach(anim => {
       this.animations.set(anim.name, anim);
     })
-    console.log(animations[2].group);
   }
 
   getCurAnimation() {
@@ -45,7 +43,6 @@ export class AnimationComponent extends Component {
     if (this.curAnim === name) {
       return;
     }
-    console.log(this.curAnim, name);
     this.curAnim = name;
     this.curAnimIdx = 0;
   }
