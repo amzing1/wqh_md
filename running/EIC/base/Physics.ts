@@ -53,13 +53,6 @@ export class Physics {
           Canvas.ctx.lineTo(position.x + polygon.m_vertices[i].x, Canvas.height - position.y + polygon.m_vertices[i].y);
         }
         Canvas.ctx.lineTo(position.x + polygon.m_vertices[0].x, Canvas.height - position.y + polygon.m_vertices[0].y);
-
-        if (Physics.isFirst) {
-          console.log('center', body.getLocalCenter());
-          console.log(position);
-          console.log(polygon.m_vertices);
-          Physics.isFirst = false;
-        }
         Canvas.ctx.stroke();
         Canvas.ctx.restore();
       }

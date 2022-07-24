@@ -26,85 +26,84 @@ export class Level {
     new SpriteImageComponent(player, new Image(), 'image/player.png', 112, 133, 0, 0, 112, 133);
     new TransformComponent(player, {x: width / 2, y: height / 2}, 0, {x: 112, y: 133});
 
-    new RigidBodyComponent(player, false, new Box(32, 32),  Vec2(width / 2, height / 2));
-
-    Level.initGround(width / 2);
-
+    const rigid = new RigidBodyComponent(player, false, new Box(16, 16),  Vec2(width / 2, height / 2));
+    rigid.setRelativePos(0, -16);
 
 
-    // const animations: Animation[] = [];
-    // let group: [number, number][] = [];
-    // let idx = 0;
-    // for (let i = 0; i < 11; i++) {
-    //   for (let j = 0; j < 12; j++) {
-    //     idx++;
-    //     group.push([j * sWidth, i * sHeight]);
-    //     // 这么办法，根据图片来的
-    //     switch (idx) {
-    //       case 1:
-    //         animations.push(new Animation('idle', group));
-    //         group = [];
-    //         break;
-    //       case 42 - 17:
-    //         animations.push(new Animation('run', group, true));
-    //         group = [];
-    //         break;
-    //       case 51 - 17:
-    //         animations.push(new Animation('light-bow', group));
-    //         group = [];
-    //         break;
-    //       case 54 - 17:
-    //         animations.push(new Animation('jump-rasing', group));
-    //         group = [];
-    //         break;
-    //       case 61 - 17:
-    //         animations.push(new Animation('rasing-to-fall', group));
-    //         group = [];
-    //         break;
-    //       case 64 - 17:
-    //         animations.push(new Animation('falling', group));
-    //         group = [];
-    //         break;
-    //       case 68 - 17:
-    //         animations.push(new Animation('landing', group));
-    //         group = [];
-    //         break;
-    //       case 72 - 17:
-    //         animations.push(new Animation('sliding', group));
-    //         group = [];
-    //         break;
-    //       case 96 - 17:
-    //         animations.push(new Animation('light-attack-combo', group, true));
-    //         group = [];
-    //         break;
-    //       case 138 - 17:
-    //         animations.push(new Animation('heavy-attack-combo', group));
-    //         group = [];
-    //         break;
-    //       case 145 - 17:
-    //         animations.push(new Animation('hurt-1', group));
-    //         group = [];
-    //         break;
-    //       case 152 - 17:
-    //         animations.push(new Animation('hurt-2', group));
-    //         group = [];
-    //         break;
-    //       case 156 - 17:
-    //         animations.push(new Animation('wall-slide', group));
-    //         group = [];
-    //         break;
-    //       case 161 - 17:
-    //         animations.push(new Animation('running-turn-around', group));
-    //         group = [];
-    //         break;
-    //       default:
-    //         break;
-    //     }
-    //   }
-    // }
 
-    // new AnimationComponent(player, animations);
-    // new PlayerASM(player);
+    const animations: Animation[] = [];
+    let group: [number, number][] = [];
+    let idx = 0;
+    for (let i = 0; i < 11; i++) {
+      for (let j = 0; j < 12; j++) {
+        idx++;
+        group.push([j * sWidth, i * sHeight]);
+        // 这么办法，根据图片来的
+        switch (idx) {
+          case 1:
+            animations.push(new Animation('idle', group));
+            group = [];
+            break;
+          case 42 - 17:
+            animations.push(new Animation('run', group, true));
+            group = [];
+            break;
+          case 51 - 17:
+            animations.push(new Animation('light-bow', group));
+            group = [];
+            break;
+          case 54 - 17:
+            animations.push(new Animation('jump-rasing', group));
+            group = [];
+            break;
+          case 61 - 17:
+            animations.push(new Animation('rasing-to-fall', group));
+            group = [];
+            break;
+          case 64 - 17:
+            animations.push(new Animation('falling', group));
+            group = [];
+            break;
+          case 68 - 17:
+            animations.push(new Animation('landing', group));
+            group = [];
+            break;
+          case 72 - 17:
+            animations.push(new Animation('sliding', group));
+            group = [];
+            break;
+          case 96 - 17:
+            animations.push(new Animation('light-attack-combo', group, true));
+            group = [];
+            break;
+          case 138 - 17:
+            animations.push(new Animation('heavy-attack-combo', group));
+            group = [];
+            break;
+          case 145 - 17:
+            animations.push(new Animation('hurt-1', group));
+            group = [];
+            break;
+          case 152 - 17:
+            animations.push(new Animation('hurt-2', group));
+            group = [];
+            break;
+          case 156 - 17:
+            animations.push(new Animation('wall-slide', group));
+            group = [];
+            break;
+          case 161 - 17:
+            animations.push(new Animation('running-turn-around', group));
+            group = [];
+            break;
+          default:
+            break;
+        }
+      }
+    }
+
+    new AnimationComponent(player, animations);
+    new PlayerASM(player);
 
     Level.player = player;
     Scene.instance.addChildren(player);

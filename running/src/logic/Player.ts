@@ -10,26 +10,23 @@ import { ComponentType, Speed } from "../../EIC/type/type";
 import { RigidBodyComponent } from "../../EIC/components";
 import { Vec2 } from "planck";
 import { Physics } from "../../EIC/base/Physics";
+import { JumpState } from "../types/type";
+import { Time, Timer } from "../../EIC/base/Time";
 
 export class Player extends Actor {
   private speed: Speed;
-  public jumpHeight: number = 50;
-  private jumpForce: number = 20;
-  private inJump: boolean = false;
-  private isInRasing: boolean = true;
-
-  // temp
-  private startHeight: number;
+  public jumpHeight: number = 150;
+  private startHeight: number = 0;
+  private prevHeight: number;
+  private jumpTimeOut: Timer | null = null;
   constructor(speed: Speed) {
     super('player');
     this.speed = speed;
-    Promise.resolve().then(() => {
-      this.startHeight = (this.getComponent(ComponentType.TRANSFORM) as TransformComponent).position.y;
-    })
   }
 
   tick() {
-    // this.action();
+    this.tickHeight();
+    this.action();
     super.tick();
   }
 
@@ -37,33 +34,36 @@ export class Player extends Actor {
     this.die();
   }
 
-  jump(transform: TransformComponent, asm: PlayerASM) {
-    if (!this.inJump) {
-      return;
+  tickHeight() {
+    const asm = this.getComponent(ComponentType.ANIMATION_STATE_MACHINE) as unknown as PlayerASM;
+    const body = (this.getComponent(ComponentType.RIGID_BODY) as RigidBodyComponent).body;
+    const curHeight = body.getPosition().y;
+    if (asm.jumpState === JumpState.START_JUMP && Event.keyActions.has(' ')) {
+      asm.jumpState = JumpState.CAN_JUMP;
+      this.startHeight = body.getPosition().y;
+      console.log('startHeight', this.startHeight);
     }
-    if (this.isInRasing && transform.position.y >= this.startHeight - this.jumpHeight) {
-      transform.position.y -= this.speed.y;
-      asm.height += this.speed.y;
-    } else {
-      this.isInRasing = false;
-     
-    }
-    if (!this.isInRasing) {
-      transform.position.y += this.speed.y;
-      asm.height -= this.speed.y;
-      if (transform.position.y <= this.startHeight) {
-        this.inJump = false;
-        transform.position.y = this.startHeight;
-        asm.height = 0;
+    if (asm.jumpState === JumpState.CAN_JUMP) {
+      if (curHeight - this.startHeight >= this.jumpHeight || !Event.keyActions.has(' ')) {
+        asm.jumpState = JumpState.IN_RASING;
       }
     }
-    
+    if (asm.jumpState === JumpState.IN_RASING) {
+      if (curHeight - this.prevHeight < 0) {
+        asm.jumpState = JumpState.IN_DOWN;
+      }
+    }
+    if (asm.jumpState === JumpState.IN_DOWN) {
+      if (curHeight - this.prevHeight === 0 ) {
+        asm.jumpState = JumpState.ON_LAND;
+      }
+    }
+    this.prevHeight = curHeight; 
   }
 
   action() {
-    const transform = this.getComponent(ComponentType.TRANSFORM) as TransformComponent;
     const asm = this.getComponent(ComponentType.ANIMATION_STATE_MACHINE) as unknown as PlayerASM;
-    const body = this.getComponent(ComponentType.RIGID_BODY) as RigidBodyComponent;
+    const body = (this.getComponent(ComponentType.RIGID_BODY) as RigidBodyComponent).body;
     if (!Event.keyActions.size) {
       asm.init();
     }
@@ -71,21 +71,26 @@ export class Player extends Actor {
       switch (val) {
         case 'arrowleft':
           asm.isMirror = false;
-          transform.position.x -= this.speed.x;
           asm.isRun = true;
+          body.applyLinearImpulse(Vec2(-50, 0), body.getWorldCenter());
           break;
         case 'arrowright':
           asm.isMirror = true;
-          // if (controller.actions.has(Action.LIGHT_ATTACK)) {
-          //   return;
-          // }
-          transform.position.x += this.speed.x;
           asm.isRun = true;
+          body.applyLinearImpulse(Vec2(50, 0), body.getWorldCenter());
           break;
-        case ' ':
-          this.inJump = true;
-          this.jump(transform, asm);
+        case ' ': {
+          switch (asm.jumpState) {
+            case JumpState.START_JUMP:
+            case JumpState.CAN_JUMP:
+            case JumpState.ON_LAND:
+              body.applyForceToCenter(Vec2(0, 20));
+              break;
+            default:
+              break;
+          }
           break;
+        }
         case 'x':
           asm.isLightAttack = true;
           break;

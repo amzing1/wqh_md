@@ -41,6 +41,12 @@ export class TransformComponent extends Component {
     } as Position;
   }
 
+  getCenterInCanvas(): Position {
+    let {x, y} = this.getCenter();
+    y = Canvas.height - y;
+    return {x, y};
+  }
+
   setCenter(x: number, y: number) {
     this._position = {
       x: x - this.scale.x / 2,

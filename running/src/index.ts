@@ -11,7 +11,7 @@ const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
 new EIC(canvas.width, canvas.height, ctx, true);
 
 
-// Level.initGrounds();
+Level.initGrounds();
 Level.initPlayer();
 // Level.initGround(Canvas.width / 2);
 

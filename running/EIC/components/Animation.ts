@@ -31,6 +31,14 @@ export class AnimationComponent extends Component {
     })
   }
 
+  initAnimations() {
+    this.animations.forEach(anim => {
+      if (anim.isOver) {
+        anim.isOver = false;
+      }
+    })
+  }
+
   getCurAnimation() {
     const curAnimation = this.animations.get(this.curAnim);
     if (!curAnimation) {
@@ -56,7 +64,10 @@ export class AnimationComponent extends Component {
     if (!sprite) {
       return;
     }
-    const curAnimation = this.getCurAnimation();
+    let curAnimation = this.getCurAnimation();
+    if (!curAnimation) {
+      return;
+    }
     if (this.curAnimIdx >= curAnimation.group.length) {
       if (curAnimation.isLoop) {
         this.curAnimIdx = 0;
@@ -65,6 +76,16 @@ export class AnimationComponent extends Component {
         curAnimation.isOver = true;
       }
     }
+    if (curAnimation.isOver && curAnimation.autoNext) {
+      // const temp = curAnimation;
+      // Promise.resolve().then(() => {
+      //   // 如果不用temp的话curAnimation 已经变成下一个动画了
+      //   temp.isOver = false;
+      // })
+      curAnimation = curAnimation.autoNext;
+      this.curAnimIdx = 0;
+    }
+    // console.log('curAnim', curAnimation.name);
     sprite.sx = curAnimation.group[this.curAnimIdx][0];
     sprite.sy = curAnimation.group[this.curAnimIdx][1];
     sprite.isMirror = this.isMirror;

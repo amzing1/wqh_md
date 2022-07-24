@@ -40,9 +40,9 @@ export class SpriteImageComponent extends SpriteComponent {
   draw() {
     super.draw(() => {
       if (this.sx !== undefined && this.sy !== undefined && this.sWidth && this.sHeight) {
-        Canvas.ctx.drawImage(this.img, this.sx, this.sy, this.sWidth, this.sHeight, 0, 0, this.width, this.height)
+        Canvas.ctx.drawImage(this.img, this.sx, this.sy, this.sWidth, this.sHeight, -this.width / 2, -this.height / 2, this.width, this.height)
       } else {
-        Canvas.ctx.drawImage(this.img, 0, 0, this.width, this.height);
+        Canvas.ctx.drawImage(this.img, -this.width / 2, -this.height / 2, this.width, this.height);
       }
     })
   }

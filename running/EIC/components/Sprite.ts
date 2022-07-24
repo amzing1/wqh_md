@@ -15,7 +15,7 @@ export class SpriteComponent extends Component {
   draw(callback?: Function) {
     if (this.visible && callback) {
       const transform = this.getActor().getComponent(ComponentType.TRANSFORM) as TransformComponent;
-      const { x, y } = transform.position;
+      let { x, y } = transform.getCenterInCanvas();
       Canvas.ctx.save();
       Canvas.ctx.translate(x, y);
       Canvas.ctx.rotate(transform.rotation);

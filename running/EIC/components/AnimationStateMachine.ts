@@ -8,6 +8,10 @@ export class AnimationStateMachineComponent extends Component {
     super(actor, ComponentType.ANIMATION_STATE_MACHINE);
   }
 
+  initAnimations() {
+    this.getAnimations().initAnimations();
+  }
+
   setIsMirror(isMirror: boolean) {
     const animComp = this.getActor().getComponent(
       ComponentType.ANIMATION
