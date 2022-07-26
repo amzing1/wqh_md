@@ -8,12 +8,10 @@ export class Animation {
   group: [number, number][];
   isLoop: boolean;
   isOver: boolean = false;
-  autoNext: Animation | null = null;
-  constructor(name: string, group: [number, number][], isLoop: boolean = false, autoNext: Animation | null = null) {
+  constructor(name: string, group: [number, number][], isLoop: boolean = false) {
     this.name = name;
     this.group = group;
     this.isLoop = isLoop;
-    this.autoNext = autoNext;
   }
 }
 
@@ -75,15 +73,6 @@ export class AnimationComponent extends Component {
         this.curAnimIdx--;
         curAnimation.isOver = true;
       }
-    }
-    if (curAnimation.isOver && curAnimation.autoNext) {
-      // const temp = curAnimation;
-      // Promise.resolve().then(() => {
-      //   // 如果不用temp的话curAnimation 已经变成下一个动画了
-      //   temp.isOver = false;
-      // })
-      curAnimation = curAnimation.autoNext;
-      this.curAnimIdx = 0;
     }
     // console.log('curAnim', curAnimation.name);
     sprite.sx = curAnimation.group[this.curAnimIdx][0];

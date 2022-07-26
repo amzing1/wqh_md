@@ -1,5 +1,6 @@
 import { Actor } from "../../EIC/base/Actor";
 import { AnimationStateMachineComponent } from "../../EIC/components";
+import { StateUnit } from "../../EIC/components/AnimationStateMachine";
 import { JumpState } from "../types/type";
 import { Player } from "./Player";
 
@@ -17,30 +18,27 @@ export class PlayerASM extends AnimationStateMachineComponent {
   public isLightAttack: boolean = false;
   public isHeavyAttack: boolean = false;
   public isHurt: boolean = false;
+  public states: StateUnit[] = [];
   constructor(actor: Actor) {
     super(actor);
-    this.initAutoNext();
+  }
+
+
+  initStates() {
+    const animations = this.getAnimations().animations;
+    animations.forEach(anim => {
+      const state: StateUnit = {
+        animation: anim,
+        nexts: [],
+        name: anim.name
+      }
+      this.states.push(state);
+    });
   }
 
   init() {
     this.isRun = false;
     this.isLightAttack = false;
-  }
-
-  initAutoNext() {
-    const animComp = this.getAnimations();
-    const rasing2fall = animComp.animations.get('rasing-to-fall');
-    const falling = animComp.animations.get('falling');
-    if (!rasing2fall || !falling) {
-      throw Error('error animations');
-    }
-    rasing2fall.autoNext = falling;
-    const rasing = animComp.animations.get('landing');
-    const idle = animComp.animations.get('idle');
-    if (!rasing || !idle) {
-      throw Error('error animations');
-    }
-    rasing.autoNext = idle;
   }
 
   tick() {

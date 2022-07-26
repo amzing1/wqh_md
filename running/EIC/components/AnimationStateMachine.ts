@@ -1,9 +1,20 @@
 import { Actor } from "../base/Actor";
 import { ComponentType } from "../type/type";
-import { AnimationComponent } from "./Animation";
+import { Animation, AnimationComponent } from "./Animation";
 import { Component } from "./Component";
 
+export interface Next {
+  state: StateUnit,
+  condition: boolean
+}
+export interface StateUnit {
+  animation: Animation;
+  nexts: Next[];
+  name: string;
+}
+
 export class AnimationStateMachineComponent extends Component {
+  entryState: StateUnit;
   constructor(actor: Actor) {
     super(actor, ComponentType.ANIMATION_STATE_MACHINE);
   }
