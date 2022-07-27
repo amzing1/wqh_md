@@ -6,21 +6,50 @@ import { Player } from "./Player";
 
 export class PlayerASM extends AnimationStateMachineComponent {
   public isMirror: boolean = true;
-  public isRun: boolean = false;
-  public height: number = 0;
-  public jumpState: JumpState = JumpState.START_JUMP;
-  public isRasing: boolean = true;
-  public isRasing2Falling: boolean = false;
-  public isFalling: boolean = false;
-  public isLanding: boolean = false;
-  public isShoot: boolean = false;
-  public isSliding: boolean = false;
-  public isLightAttack: boolean = false;
-  public isHeavyAttack: boolean = false;
-  public isHurt: boolean = false;
-  public states: StateUnit[] = [];
+  public isRun: {val: boolean} = {val: false};
+  public isRun2idle: {val: boolean} = {val: false};
+  public _jumpState: JumpState = JumpState.START_JUMP;
+  public isRasing: {val: boolean} = {val: false};
+  public isRasing2Falling: {val: boolean} = {val: false};
+  public isFalling: {val: boolean} = {val: false};
+  public isLanding: {val: boolean} = {val: false};
+  // public isShoot: boolean = false;
+  // public isSliding: boolean = false;
+  // public isLightAttack: boolean = false;
+  // public isHeavyAttack: boolean = false;
+  // public isHurt: boolean = false;
+  public stateMap: Map<string, StateUnit> = new Map();
   constructor(actor: Actor) {
     super(actor);
+    this.initStates();
+    this.initStatLogic();
+  }
+
+  get jumpState() {
+    return this._jumpState;
+  }
+
+  set jumpState(val: JumpState) {
+    if (val === JumpState.CAN_JUMP) {
+      this.isRasing.val = true;
+    } else if (val === JumpState.IN_RASING) {
+      this.isRasing2Falling.val = true;
+    } else if (val === JumpState.IN_DOWN) {
+      this.isFalling.val = true;
+    } else if (val === JumpState.ON_LAND) {
+      this.isLanding.val = true;
+    }
+    this._jumpState = val;
+  }
+
+  initConditions() {
+    this.isRun.val = false;
+    this.isRun2idle.val = false;
+    this._jumpState = JumpState.START_JUMP;
+    this.isRasing.val = false;
+    this.isRasing2Falling.val = false;
+    this.isFalling.val = false;
+    this.isLanding.val = false;
   }
 
 
@@ -32,53 +61,105 @@ export class PlayerASM extends AnimationStateMachineComponent {
         nexts: [],
         name: anim.name
       }
-      this.states.push(state);
+      this.stateMap.set(anim.name, state);
     });
   }
 
-  init() {
-    this.isRun = false;
-    this.isLightAttack = false;
+  initStatLogic() {
+    const idleState = this.stateMap.get('idle') as StateUnit;
+    const runState = this.stateMap.get('run') as StateUnit;
+    const jumpRasingState = this.stateMap.get('jump-rasing') as StateUnit;
+    const jump2fallState = this.stateMap.get('rasing-to-fall') as StateUnit;
+    const fallingState = this.stateMap.get('falling') as StateUnit;
+    const landingState = this.stateMap.get('landing') as StateUnit;
+    this.entryState = idleState;
+    idleState.nexts.push({
+      state: runState,
+      condition: this.isRun
+    });
+    idleState.nexts.push({
+      state: jumpRasingState,
+      condition: this.isRasing
+    });
+    runState.nexts.push({
+      state: jumpRasingState,
+      condition: this.isRasing
+    });
+    runState.nexts.push({
+      state: idleState,
+      condition: this.isRun2idle
+    });
+    jumpRasingState.nexts.push({
+      state: jump2fallState,
+      condition: this.isRasing2Falling
+    });
+    jump2fallState.nexts.push({
+      state: fallingState,
+      condition: jump2fallState.animation.isOver
+    });
+    fallingState.nexts.push({
+      state: landingState,
+      condition: this.isLanding
+    });
+    landingState.nexts.push({
+      state: idleState,
+      condition: landingState.animation.isOver
+    });
+  }
+
+  getCurState(startState: StateUnit, count: number): StateUnit {
+    for (let i = 0; i < startState.nexts.length; i++) {
+      if (startState.nexts[i].condition.val) {
+        if (count > 0 && startState.name === 'idle') {
+          this.initConditions();
+        }
+        startState = this.getCurState(startState.nexts[i].state, count + 1);
+        break;
+      }
+    }
+    return startState;
   }
 
   tick() {
     const animations = this.getAnimations().animations;
     this.setIsMirror(this.isMirror);
-    let curAnim = animations.get("idle");
-    if (this.isRun) {
-      curAnim = animations.get("run");
-    }
+    const curState = this.getCurState(this.entryState, 0);
+    this.setAnim(curState.name);
+    // let curAnim = animations.get("idle");
+    // if (this.isRun) {
+    //   curAnim = animations.get("run");
+    // }
 
-    switch (this.jumpState) {
-      case JumpState.CAN_JUMP:
-      case JumpState.IN_RASING:
-        curAnim = animations.get("jump-rasing");
-        break;
-      case JumpState.IN_DOWN:
-        curAnim = animations.get("rasing-to-fall");
-        break;
-      case JumpState.ON_LAND:
-        curAnim = animations.get("landing");
-        if (curAnim?.isOver) {
-          Promise.resolve().then(() => {
-            this.jumpState = JumpState.START_JUMP;
-            this.initAnimations();
-          });
+    // switch (this.jumpState) {
+    //   case JumpState.CAN_JUMP:
+    //   case JumpState.IN_RASING:
+    //     curAnim = animations.get("jump-rasing");
+    //     break;
+    //   case JumpState.IN_DOWN:
+    //     curAnim = animations.get("rasing-to-fall");
+    //     break;
+    //   case JumpState.ON_LAND:
+    //     curAnim = animations.get("landing");
+    //     if (curAnim?.isOver) {
+    //       Promise.resolve().then(() => {
+    //         this.jumpState = JumpState.START_JUMP;
+    //         this.initAnimations();
+    //       });
           
-        }
-        break;
-      default:
-        break;
-    }
+    //     }
+    //     break;
+    //   default:
+    //     break;
+    // }
 
-    if (this.isLightAttack) {
-      curAnim = animations.get("light-attack-combo");
-    }
+    // // if (this.isLightAttack) {
+    // //   curAnim = animations.get("light-attack-combo");
+    // // }
 
-    if (!curAnim) {
-      throw Error("no anim");
-    }
-    this.setAnim(curAnim.name);
+    // if (!curAnim) {
+    //   throw Error("no anim");
+    // }
+    // this.setAnim(curAnim.name);
     super.tick();
   }
 }

@@ -5,7 +5,7 @@ import { Component } from "./Component";
 
 export interface Next {
   state: StateUnit,
-  condition: boolean
+  condition: {val: boolean}
 }
 export interface StateUnit {
   animation: Animation;

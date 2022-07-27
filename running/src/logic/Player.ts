@@ -64,26 +64,31 @@ export class Player extends Actor {
   action() {
     const asm = this.getComponent(ComponentType.ANIMATION_STATE_MACHINE) as unknown as PlayerASM;
     const body = (this.getComponent(ComponentType.RIGID_BODY) as RigidBodyComponent).body;
-    if (!Event.keyActions.size) {
-      asm.init();
+    // if (!Event.keyActions.size) {
+    //   asm.init();
+    // }
+    if (!Event.keyActions.has('arrowleft') && !Event.keyActions.has('arrowRight')) {
+      asm.isRun.val = false;
+      asm.isRun2idle.val = true;
     }
     Event.keyActions.forEach(val => {
       switch (val) {
         case 'arrowleft':
           asm.isMirror = false;
-          asm.isRun = true;
+          asm.isRun.val = true;
+          asm.isRun2idle.val = false;
           body.applyLinearImpulse(Vec2(-50, 0), body.getWorldCenter());
           break;
         case 'arrowright':
           asm.isMirror = true;
-          asm.isRun = true;
+          asm.isRun.val = true;
+          asm.isRun2idle.val = false;
           body.applyLinearImpulse(Vec2(50, 0), body.getWorldCenter());
           break;
         case ' ': {
           switch (asm.jumpState) {
             case JumpState.START_JUMP:
             case JumpState.CAN_JUMP:
-            case JumpState.ON_LAND:
               body.applyForceToCenter(Vec2(0, 20));
               break;
             default:
@@ -91,9 +96,9 @@ export class Player extends Actor {
           }
           break;
         }
-        case 'x':
-          asm.isLightAttack = true;
-          break;
+        // case 'x':
+        //   asm.isLightAttack = true;
+        //   break;
         case 'd':
           // body.body.applyForce(Vec2(10, 0), body.body.getWorldCenter());
           // Physics.drawPhysicsBody();

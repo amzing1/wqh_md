@@ -7,7 +7,7 @@ export class Animation {
   name: string;
   group: [number, number][];
   isLoop: boolean;
-  isOver: boolean = false;
+  isOver: {val: boolean} = {val: false};
   constructor(name: string, group: [number, number][], isLoop: boolean = false) {
     this.name = name;
     this.group = group;
@@ -31,8 +31,8 @@ export class AnimationComponent extends Component {
 
   initAnimations() {
     this.animations.forEach(anim => {
-      if (anim.isOver) {
-        anim.isOver = false;
+      if (anim.isOver.val) {
+        anim.isOver.val = false;
       }
     })
   }
@@ -71,7 +71,7 @@ export class AnimationComponent extends Component {
         this.curAnimIdx = 0;
       } else {
         this.curAnimIdx--;
-        curAnimation.isOver = true;
+        curAnimation.isOver.val = true;
       }
     }
     // console.log('curAnim', curAnimation.name);
