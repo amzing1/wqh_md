@@ -1,8 +1,7 @@
-import { Box, Vec2, Edge, Polygon } from 'planck';
+import { Box, Vec2, Edge } from 'planck';
 import { Canvas } from '../EIC/base/Canvas';
 import { Scene } from '../EIC/base/Scene';
 import { Animation, AnimationComponent, RigidBodyComponent, SpriteImageComponent, TransformComponent } from '../EIC/components';
-import { Position } from '../EIC/type/type';
 import { Ground } from './logic/Ground';
 import { Player } from './logic/Player'
 import { PlayerASM } from './logic/PlayerASM';
@@ -17,7 +16,7 @@ export class Level {
 
     const { width, height } = Canvas;
 
-    const player = new Player({ x: 1, y: 0.2 });
+    const player = new Player();
     // 精灵图每个单元的宽高
     const sWidth = 112;
     const sHeight = 133;
@@ -44,55 +43,55 @@ export class Level {
             animations.push(new Animation('idle', group));
             group = [];
             break;
-          case 42 - 17:
+          case 25:
             animations.push(new Animation('run', group, true));
             group = [];
             break;
-          case 51 - 17:
+          case 34:
             animations.push(new Animation('light-bow', group));
             group = [];
             break;
-          case 54 - 17:
+          case 37:
             animations.push(new Animation('jump-rasing', group));
             group = [];
             break;
-          case 61 - 17:
+          case 44:
             animations.push(new Animation('rasing-to-fall', group));
             group = [];
             break;
-          case 64 - 17:
+          case 47:
             animations.push(new Animation('falling', group));
             group = [];
             break;
-          case 68 - 17:
+          case 51:
             animations.push(new Animation('landing', group));
             group = [];
             break;
-          case 72 - 17:
+          case 55:
             animations.push(new Animation('sliding', group));
             group = [];
             break;
-          case 96 - 17:
+          case 79:
             animations.push(new Animation('light-attack-combo', group, true));
             group = [];
             break;
-          case 138 - 17:
+          case 121:
             animations.push(new Animation('heavy-attack-combo', group));
             group = [];
             break;
-          case 145 - 17:
+          case 128:
             animations.push(new Animation('hurt-1', group));
             group = [];
             break;
-          case 152 - 17:
+          case 135:
             animations.push(new Animation('hurt-2', group));
             group = [];
             break;
-          case 156 - 17:
+          case 139:
             animations.push(new Animation('wall-slide', group));
             group = [];
             break;
-          case 161 - 17:
+          case 144:
             animations.push(new Animation('running-turn-around', group));
             group = [];
             break;
@@ -110,7 +109,6 @@ export class Level {
   }
   
   static initGround(x: number) {
-    // const isHigh = Math.random() > 0.8;
     const isHigh = false;
     const ground = new Ground('ground', isHigh);
     new TransformComponent(ground, { x, y: 40 }, 0, {x: 80, y: 80  });

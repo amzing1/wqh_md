@@ -1,27 +1,21 @@
 
 
 import { Actor } from "../../EIC/base/Actor";
-import { Canvas } from "../../EIC/base/Canvas";
-import { TransformComponent } from "../../EIC/components/Transform";
 import { PlayerASM } from "./PlayerASM";
-import {SpriteImageComponent} from '../../EIC/components/SpriteImage';
 import { Event } from "../../EIC/base/Event";
 import { ComponentType, Speed } from "../../EIC/type/type";
 import { RigidBodyComponent } from "../../EIC/components";
 import { Vec2 } from "planck";
-import { Physics } from "../../EIC/base/Physics";
 import { JumpState } from "../types/type";
-import { Time, Timer } from "../../EIC/base/Time";
+import { Timer } from "../../EIC/base/Time";
 
 export class Player extends Actor {
-  private speed: Speed;
   public jumpHeight: number = 150;
   private startHeight: number = 0;
   private prevHeight: number;
   private jumpTimeOut: Timer | null = null;
-  constructor(speed: Speed) {
+  constructor() {
     super('player');
-    this.speed = speed;
   }
 
   tick() {
@@ -64,9 +58,6 @@ export class Player extends Actor {
   action() {
     const asm = this.getComponent(ComponentType.ANIMATION_STATE_MACHINE) as unknown as PlayerASM;
     const body = (this.getComponent(ComponentType.RIGID_BODY) as RigidBodyComponent).body;
-    // if (!Event.keyActions.size) {
-    //   asm.init();
-    // }
     if (!Event.keyActions.has('arrowleft') && !Event.keyActions.has('arrowRight')) {
       asm.isRun.val = false;
       asm.isRun2idle.val = true;
@@ -96,14 +87,9 @@ export class Player extends Actor {
           }
           break;
         }
-        // case 'x':
-        //   asm.isLightAttack = true;
-        //   break;
-        case 'd':
-          // body.body.applyForce(Vec2(10, 0), body.body.getWorldCenter());
-          // Physics.drawPhysicsBody();
+        case 'x':
+          asm.isLightAttack.val = true;
           break;
-
       }
     })
   }

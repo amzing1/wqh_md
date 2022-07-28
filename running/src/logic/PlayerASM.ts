@@ -2,7 +2,6 @@ import { Actor } from "../../EIC/base/Actor";
 import { AnimationStateMachineComponent } from "../../EIC/components";
 import { StateUnit } from "../../EIC/components/AnimationStateMachine";
 import { JumpState } from "../types/type";
-import { Player } from "./Player";
 
 export class PlayerASM extends AnimationStateMachineComponent {
   public isMirror: boolean = true;
@@ -15,7 +14,7 @@ export class PlayerASM extends AnimationStateMachineComponent {
   public isLanding: {val: boolean} = {val: false};
   // public isShoot: boolean = false;
   // public isSliding: boolean = false;
-  // public isLightAttack: boolean = false;
+  public isLightAttack: {val: boolean} = {val: false};
   // public isHeavyAttack: boolean = false;
   // public isHurt: boolean = false;
   public stateMap: Map<string, StateUnit> = new Map();
@@ -72,6 +71,8 @@ export class PlayerASM extends AnimationStateMachineComponent {
     const jump2fallState = this.stateMap.get('rasing-to-fall') as StateUnit;
     const fallingState = this.stateMap.get('falling') as StateUnit;
     const landingState = this.stateMap.get('landing') as StateUnit;
+    const lightAttackState = this.stateMap.get('light-attack-combo') as StateUnit;
+
     this.entryState = idleState;
     idleState.nexts.push({
       state: runState,
@@ -80,6 +81,10 @@ export class PlayerASM extends AnimationStateMachineComponent {
     idleState.nexts.push({
       state: jumpRasingState,
       condition: this.isRasing
+    });
+    idleState.nexts.push({
+      state: lightAttackState,
+      condition: this.isLightAttack
     });
     runState.nexts.push({
       state: jumpRasingState,
@@ -125,41 +130,6 @@ export class PlayerASM extends AnimationStateMachineComponent {
     this.setIsMirror(this.isMirror);
     const curState = this.getCurState(this.entryState, 0);
     this.setAnim(curState.name);
-    // let curAnim = animations.get("idle");
-    // if (this.isRun) {
-    //   curAnim = animations.get("run");
-    // }
-
-    // switch (this.jumpState) {
-    //   case JumpState.CAN_JUMP:
-    //   case JumpState.IN_RASING:
-    //     curAnim = animations.get("jump-rasing");
-    //     break;
-    //   case JumpState.IN_DOWN:
-    //     curAnim = animations.get("rasing-to-fall");
-    //     break;
-    //   case JumpState.ON_LAND:
-    //     curAnim = animations.get("landing");
-    //     if (curAnim?.isOver) {
-    //       Promise.resolve().then(() => {
-    //         this.jumpState = JumpState.START_JUMP;
-    //         this.initAnimations();
-    //       });
-          
-    //     }
-    //     break;
-    //   default:
-    //     break;
-    // }
-
-    // // if (this.isLightAttack) {
-    // //   curAnim = animations.get("light-attack-combo");
-    // // }
-
-    // if (!curAnim) {
-    //   throw Error("no anim");
-    // }
-    // this.setAnim(curAnim.name);
     super.tick();
   }
 }
