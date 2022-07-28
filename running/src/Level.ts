@@ -48,7 +48,7 @@ export class Level {
             group = [];
             break;
           case 34:
-            animations.push(new Animation('light-bow', group));
+            animations.push(new Animation('light-bow', group, true));
             group = [];
             break;
           case 37:

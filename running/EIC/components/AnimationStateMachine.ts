@@ -34,6 +34,9 @@ export class AnimationStateMachineComponent extends Component {
     const animComp = this.getActor().getComponent(
       ComponentType.ANIMATION
     ) as AnimationComponent;
+    if (name === 'light-bow') {
+      console.log('jj')
+    }
     animComp.setAnim(name);
   }
 

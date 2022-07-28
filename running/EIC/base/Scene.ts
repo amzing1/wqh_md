@@ -19,6 +19,7 @@ export class Scene extends Actor {
       Time.delta = performance.now() - Time.curTime;
       Time.curTime = performance.now();
       Canvas.ctx.clearRect(0, 0, Canvas.width, Canvas.height);
+      Time.tick();
       super.tick();
       this.tick();
       Physics.tickPhysics();

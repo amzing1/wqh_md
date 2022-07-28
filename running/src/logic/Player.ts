@@ -7,13 +7,14 @@ import { ComponentType, Speed } from "../../EIC/type/type";
 import { RigidBodyComponent } from "../../EIC/components";
 import { Vec2 } from "planck";
 import { JumpState } from "../types/type";
-import { Timer } from "../../EIC/base/Time";
+import { Time, Timer } from "../../EIC/base/Time";
 
 export class Player extends Actor {
-  public jumpHeight: number = 150;
+  public jumpHeight: number = 100;
   private startHeight: number = 0;
   private prevHeight: number;
   private jumpTimeOut: Timer | null = null;
+  private jumpBetween: number = 500;
   constructor() {
     super('player');
   }
@@ -32,6 +33,12 @@ export class Player extends Actor {
     const asm = this.getComponent(ComponentType.ANIMATION_STATE_MACHINE) as unknown as PlayerASM;
     const body = (this.getComponent(ComponentType.RIGID_BODY) as RigidBodyComponent).body;
     const curHeight = body.getPosition().y;
+
+    if (this.jumpTimeOut && !this.jumpTimeOut.isDone) {
+      return;
+    } else {
+      this.jumpTimeOut = null;
+    }
     if (asm.jumpState === JumpState.START_JUMP && Event.keyActions.has(' ')) {
       asm.jumpState = JumpState.CAN_JUMP;
       this.startHeight = body.getPosition().y;
@@ -50,6 +57,7 @@ export class Player extends Actor {
     if (asm.jumpState === JumpState.IN_DOWN) {
       if (curHeight - this.prevHeight === 0 ) {
         asm.jumpState = JumpState.ON_LAND;
+        this.jumpTimeOut = Time.createTimer(this.jumpBetween);
       }
     }
     this.prevHeight = curHeight; 
@@ -61,6 +69,13 @@ export class Player extends Actor {
     if (!Event.keyActions.has('arrowleft') && !Event.keyActions.has('arrowRight')) {
       asm.isRun.val = false;
       asm.isRun2idle.val = true;
+    }
+    if (!Event.keyActions.has('x')) {
+      asm.isLightAttack.val = false;
+    }
+    if (!Event.keyActions.has('s')) {
+      asm.isShoot.val = false;
+      asm.isShoot2idle.val = true;
     }
     Event.keyActions.forEach(val => {
       switch (val) {
@@ -77,6 +92,11 @@ export class Player extends Actor {
           body.applyLinearImpulse(Vec2(50, 0), body.getWorldCenter());
           break;
         case ' ': {
+          if (this.jumpTimeOut && !this.jumpTimeOut.isDone) {
+            return;
+          } else {
+            this.jumpTimeOut = null;
+          }
           switch (asm.jumpState) {
             case JumpState.START_JUMP:
             case JumpState.CAN_JUMP:
@@ -89,6 +109,10 @@ export class Player extends Actor {
         }
         case 'x':
           asm.isLightAttack.val = true;
+          break;
+        case 's':
+          asm.isShoot.val = true;
+          asm.isShoot2idle.val = false;
           break;
       }
     })

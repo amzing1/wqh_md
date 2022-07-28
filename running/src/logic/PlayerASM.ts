@@ -12,7 +12,8 @@ export class PlayerASM extends AnimationStateMachineComponent {
   public isRasing2Falling: {val: boolean} = {val: false};
   public isFalling: {val: boolean} = {val: false};
   public isLanding: {val: boolean} = {val: false};
-  // public isShoot: boolean = false;
+  public isShoot: {val: boolean} = {val: false};
+  public isShoot2idle: {val: boolean} = {val: false};
   // public isSliding: boolean = false;
   public isLightAttack: {val: boolean} = {val: false};
   // public isHeavyAttack: boolean = false;
@@ -49,6 +50,9 @@ export class PlayerASM extends AnimationStateMachineComponent {
     this.isRasing2Falling.val = false;
     this.isFalling.val = false;
     this.isLanding.val = false;
+    this.isLightAttack.val = false;
+    this.isShoot.val = false;
+    this.isShoot2idle.val = false;
   }
 
 
@@ -72,6 +76,7 @@ export class PlayerASM extends AnimationStateMachineComponent {
     const fallingState = this.stateMap.get('falling') as StateUnit;
     const landingState = this.stateMap.get('landing') as StateUnit;
     const lightAttackState = this.stateMap.get('light-attack-combo') as StateUnit;
+    const shootState = this.stateMap.get('light-bow') as StateUnit;
 
     this.entryState = idleState;
     idleState.nexts.push({
@@ -85,6 +90,10 @@ export class PlayerASM extends AnimationStateMachineComponent {
     idleState.nexts.push({
       state: lightAttackState,
       condition: this.isLightAttack
+    });
+    idleState.nexts.push({
+      state: shootState,
+      condition: this.isShoot
     });
     runState.nexts.push({
       state: jumpRasingState,
@@ -110,6 +119,10 @@ export class PlayerASM extends AnimationStateMachineComponent {
       state: idleState,
       condition: landingState.animation.isOver
     });
+    shootState.nexts.push({
+      state: idleState,
+      condition: shootState.animation.isOver
+    })
   }
 
   getCurState(startState: StateUnit, count: number): StateUnit {
@@ -126,7 +139,6 @@ export class PlayerASM extends AnimationStateMachineComponent {
   }
 
   tick() {
-    const animations = this.getAnimations().animations;
     this.setIsMirror(this.isMirror);
     const curState = this.getCurState(this.entryState, 0);
     this.setAnim(curState.name);
