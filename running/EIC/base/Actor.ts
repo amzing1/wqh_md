@@ -1,5 +1,4 @@
-import { Component } from '../components/Component';
-import { TransformComponent } from '../components/Transform';
+import { Component, TransformComponent, SpriteComponent, RigidBodyComponent, AnimationComponent, AnimationStateMachineComponent, AudioPlayerComponent } from '../components/index'
 import { ComponentType } from '../type/type';
 import { Scene } from './Scene';
 
@@ -18,7 +17,12 @@ export class Actor {
     component.setActor(this);
     this.componentMap.set(component.name, component);
   }
-
+  getComponent(name: ComponentType.TRANSFORM): TransformComponent
+  getComponent(name: ComponentType.SPRITE): SpriteComponent
+  getComponent(name: ComponentType.RIGID_BODY): RigidBodyComponent
+  getComponent(name: ComponentType.ANIMATION): AnimationComponent
+  getComponent(name: ComponentType.ANIMATION_STATE_MACHINE): AnimationStateMachineComponent
+  getComponent(name: ComponentType.AUDIO_PLAYER): AudioPlayerComponent
   getComponent(name: ComponentType) {
     const component = this.componentMap.get(name);
     if (!component) {
