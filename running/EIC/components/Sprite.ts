@@ -17,6 +17,7 @@ export class SpriteComponent extends Component {
       const transform = this.getActor().getComponent(ComponentType.TRANSFORM) as TransformComponent;
       let { x, y } = transform.getCenterInCanvas();
       Canvas.ctx.save();
+      Canvas.ctx.globalCompositeOperation = 'source-over';
       Canvas.ctx.translate(x, y);
       Canvas.ctx.rotate(transform.rotation);
       this.isMirror && Canvas.ctx.scale(-1, 1);

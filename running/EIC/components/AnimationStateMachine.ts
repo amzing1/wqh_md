@@ -15,12 +15,26 @@ export interface StateUnit {
 
 export class AnimationStateMachineComponent extends Component {
   entryState: StateUnit;
+  public stateMap: Map<string, StateUnit> = new Map();
   constructor(actor: Actor) {
     super(actor, ComponentType.ANIMATION_STATE_MACHINE);
+    this.initStates();
   }
 
   initAnimations() {
     this.getAnimations().initAnimations();
+  }
+
+  initStates() {
+    const animations = this.getAnimations().animations;
+    animations.forEach(anim => {
+      const state: StateUnit = {
+        animation: anim,
+        nexts: [],
+        name: anim.name
+      }
+      this.stateMap.set(anim.name, state);
+    });
   }
 
   setIsMirror(isMirror: boolean) {
@@ -34,9 +48,6 @@ export class AnimationStateMachineComponent extends Component {
     const animComp = this.getActor().getComponent(
       ComponentType.ANIMATION
     ) as AnimationComponent;
-    if (name === 'light-bow') {
-      console.log('jj')
-    }
     animComp.setAnim(name);
   }
 
@@ -54,4 +65,5 @@ export class AnimationStateMachineComponent extends Component {
     const curAnim = animComp.getCurAnimation();
     return curAnim;
   }
+  
 }

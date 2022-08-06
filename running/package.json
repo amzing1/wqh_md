@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@box2d/lights": "^0.9.1",
     "@types/matter-js": "^0.17.7",
     "matter-js": "^0.18.0",
     "planck": "^1.0.0-alpha.4",

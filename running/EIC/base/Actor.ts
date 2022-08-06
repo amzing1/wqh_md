@@ -72,4 +72,6 @@ export class Actor {
     const trans = this.getComponent(ComponentType.TRANSFORM) as TransformComponent;
     return trans;
   }
+
+  onContact(actor: Actor) {}
 }

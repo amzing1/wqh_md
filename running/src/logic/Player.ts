@@ -14,7 +14,7 @@ export class Player extends Actor {
   private startHeight: number = 0;
   private prevHeight: number;
   private jumpTimeOut: Timer | null = null;
-  private jumpBetween: number = 500;
+  private jumpBetween: number = 0;
   constructor() {
     super('player');
   }
@@ -42,7 +42,6 @@ export class Player extends Actor {
     if (asm.jumpState === JumpState.START_JUMP && Event.keyActions.has(' ')) {
       asm.jumpState = JumpState.CAN_JUMP;
       this.startHeight = body.getPosition().y;
-      console.log('startHeight', this.startHeight);
     }
     if (asm.jumpState === JumpState.CAN_JUMP) {
       if (curHeight - this.startHeight >= this.jumpHeight || !Event.keyActions.has(' ')) {
@@ -57,7 +56,9 @@ export class Player extends Actor {
     if (asm.jumpState === JumpState.IN_DOWN) {
       if (curHeight - this.prevHeight === 0 ) {
         asm.jumpState = JumpState.ON_LAND;
-        this.jumpTimeOut = Time.createTimer(this.jumpBetween);
+        if (this.jumpBetween !== 0) {
+          this.jumpTimeOut = Time.createTimer(this.jumpBetween);
+        }
       }
     }
     this.prevHeight = curHeight; 

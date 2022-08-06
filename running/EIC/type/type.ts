@@ -15,6 +15,7 @@ export enum ComponentType {
   ANIMATION,
   ANIMATION_STATE_MACHINE,
   RIGID_BODY,
+  LIGHT
 }
 
 export enum Action {

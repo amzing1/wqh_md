@@ -1,4 +1,5 @@
 import * as planck from 'planck/dist/planck-with-testbed';
+import { Actor } from './Actor';
 import { Canvas } from './Canvas';
 import { Time } from './Time';
 
@@ -7,13 +8,25 @@ export class Physics {
   static isDebug: boolean = true;
   static isFirst: boolean = true;
   constructor() {
-    Physics.world = planck.World(planck.Vec2(0, -10));
+    Physics.world = planck.World();
+    Physics.world.setGravity(planck.Vec2(0, -10));
   }
 
   static tickPhysics() {
     const velocityIterations = 8;
     const positionIterations = 3;
     Physics.world.step(Time.delta, velocityIterations, positionIterations);
+
+    let contact = Physics.world.getContactList();
+    while (contact) {
+      const actorA = contact.getFixtureA().getBody().getUserData() as Actor;
+      const actorB = contact.getFixtureB().getBody().getUserData() as Actor;
+      if (actorA && actorB) {
+        actorA.onContact(actorB);
+        actorB.onContact(actorA);
+      }
+      contact = contact.getNext();
+    }
 
     if (Physics.isDebug) {
       let body = Physics.world.getBodyList();

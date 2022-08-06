@@ -26,6 +26,7 @@ export class  RigidBodyComponent extends Component {
     if (pos) {
       this.body.createFixture(shape);
       this.body.setPosition(pos);
+      this.body.setUserData(this.getActor());
     } else {
       this.body.createFixture({
         friction: 1,

@@ -13,5 +13,6 @@ new EIC(canvas.width, canvas.height, ctx, true);
 
 Level.initGrounds();
 Level.initPlayer();
+Level.initTrampoline();
 // Level.initGround(Canvas.width / 2);
 

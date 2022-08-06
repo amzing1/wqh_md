@@ -18,10 +18,8 @@ export class PlayerASM extends AnimationStateMachineComponent {
   public isLightAttack: {val: boolean} = {val: false};
   // public isHeavyAttack: boolean = false;
   // public isHurt: boolean = false;
-  public stateMap: Map<string, StateUnit> = new Map();
   constructor(actor: Actor) {
     super(actor);
-    this.initStates();
     this.initStatLogic();
   }
 
@@ -53,19 +51,6 @@ export class PlayerASM extends AnimationStateMachineComponent {
     this.isLightAttack.val = false;
     this.isShoot.val = false;
     this.isShoot2idle.val = false;
-  }
-
-
-  initStates() {
-    const animations = this.getAnimations().animations;
-    animations.forEach(anim => {
-      const state: StateUnit = {
-        animation: anim,
-        nexts: [],
-        name: anim.name
-      }
-      this.stateMap.set(anim.name, state);
-    });
   }
 
   initStatLogic() {
@@ -124,7 +109,7 @@ export class PlayerASM extends AnimationStateMachineComponent {
       condition: shootState.animation.isOver
     })
   }
-
+  
   getCurState(startState: StateUnit, count: number): StateUnit {
     for (let i = 0; i < startState.nexts.length; i++) {
       if (startState.nexts[i].condition.val) {

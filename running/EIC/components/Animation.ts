@@ -17,7 +17,7 @@ export class Animation {
 
 export class AnimationComponent extends Component {
   animations: Map<string, Animation> = new Map();
-  curAnim: string = 'run';
+  curAnim: string = 'idle';
   curAnimIdx: number = 0;
   isMirror: boolean = true;
   private framesOneSecound: number = 24;
@@ -74,7 +74,6 @@ export class AnimationComponent extends Component {
         curAnimation.isOver.val = true;
       }
     }
-    // console.log('curAnim', curAnimation.name);
     sprite.sx = curAnimation.group[this.curAnimIdx][0];
     sprite.sy = curAnimation.group[this.curAnimIdx][1];
     sprite.isMirror = this.isMirror;

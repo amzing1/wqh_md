@@ -31,6 +31,6 @@ export class Time {
     })
     Promise.resolve().then(() => {
       Time.timers = Time.timers.filter(timer => !timer.isDone)
-    })
+    }) 
   }
 }
