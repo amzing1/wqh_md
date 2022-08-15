@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+import mongoose, { Schema, SchemaType, SchemaTypes } from 'mongoose'
 import validator from 'validator'
 import { hash, compare } from 'bcryptjs'
 import { createHash, randomBytes } from 'crypto'
@@ -34,6 +34,27 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: ['user', 'admin', 'creator'],
     default: 'user'
+  },
+  coins: {
+    type: Number,
+    default: 0
+  },
+  bCoins: {
+    type: Number,
+    default: 0
+  },
+  level: {
+    type: Number,
+    default: 1
+  },
+  attentions: {
+    type: [Schema.Types.ObjectId]
+  },
+  fens: {
+    type: [Schema.Types.ObjectId]
+  },
+  dynamicStates: {
+    type: [Schema.Types.ObjectId]
   },
   passwordResetToken: String,
   passwordResetExpires: Date

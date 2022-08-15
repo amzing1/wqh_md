@@ -1,5 +1,6 @@
 import express from 'express'
 import {
+  auth,
   forgetPassword,
   login,
   protect,
@@ -20,6 +21,7 @@ import {
 const router = express.Router()
 
 router.route('/').get(protect, getUsers)
+router.route('/auth').get(auth)
 router.route('/the-three-oldest').get(aliasOldest, getUsers)
 router.route('/userStats').get(getUserStats)
 router.route('/signup').post(signup)

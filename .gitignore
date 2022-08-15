@@ -1,1 +1,3 @@
 vue3-source/node_modules/*
+running/node_modules/*
+running/package-lock.json

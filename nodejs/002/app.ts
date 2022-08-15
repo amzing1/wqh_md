@@ -7,9 +7,11 @@ import { globalErrorHandler } from './control/errorController'
 import rateLimit from 'express-rate-limit'
 import helmet from 'helmet'
 import hpp from 'hpp'
+import cors from 'cors'
 
 export const app = express()
 
+app.use(cors())
 app.use(helmet())
 
 app.use(bodyParser.json())

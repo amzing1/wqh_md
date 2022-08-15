@@ -46,9 +46,11 @@ const login = asyncErrorCatch(
       return next(new ApiError(400, 'invalid email or password'))
     }
     const token = signToken(user._id)
+    user.password = undefined
     res.status(200).json({
       status: 'success',
-      token
+      token,
+      user
     })
   }
 )
@@ -84,6 +86,39 @@ const protect = asyncErrorCatch(
     next()
   }
 )
+
+const auth = asyncErrorCatch(async (req, res, next) => {
+  let token: string = ''
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith('Bearer')
+  ) {
+    token = req.headers.authorization.split(' ')[1]
+  }
+  if (!token) {
+    return next(new ApiError(401, 'not authed!'))
+  }
+
+  const decode = jwt.verify(
+    token,
+    process.env.JWT_SECRET as string
+  ) as jwt.JwtPayload
+
+  const user = await userModel.findById(decode.id)
+
+  if (!user) {
+    return next(new ApiError(401, `can't find this user!`))
+  }
+
+  if (user.isPasswordExpired(decode.iat)) {
+    return next(new ApiError(401, 'your password is changed recently'))
+  }
+
+  res.status(200).json({
+    status: 'success',
+    user
+  })
+})
 
 const redirectTo = (...roles: string[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
@@ -175,6 +210,7 @@ const updatePassword = asyncErrorCatch(
 )
 
 export {
+  auth,
   signup,
   login,
   protect,
