@@ -2,7 +2,7 @@ import { Actor } from "../base/Actor";
 import { ComponentType } from "../type/type";
 
 
-export class Component {
+export abstract class Component {
   private actor: Actor;
   public name: ComponentType;
   constructor(actor: Actor, name: ComponentType) {
